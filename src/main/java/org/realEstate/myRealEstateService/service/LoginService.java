@@ -11,14 +11,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoginService {
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
     public String login(String username, String password) {
         if ("test_user".equals(username) && "password".equals(password)) {
             List<String> roles = List.of("USER");
 
-            String token = jwtUtil.generateToken(username, roles);
+            String token = JwtUtil.generateToken(username, roles);
 
             //String user = jwtUtil.getUsername(token);
             //List<String> user_roles = jwtUtil.getRoles(token);

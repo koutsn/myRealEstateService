@@ -19,17 +19,17 @@ public class JwtUtil {
     // Secret key for signing the JWT (keep it safe!)
     //private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey";
+    private static final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey";
 
-    private Key getSigningKey() {
+    private static Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
     // Token validity in milliseconds (e.g., 1 hour)
-    private final long jwtExpirationMs = 3600000;
+    private final static long jwtExpirationMs = 3600000;
 
     // Generate JWT token
-    public String generateToken(String username, List<String> roles) {
+    public static String generateToken(String username, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
@@ -40,7 +40,7 @@ public class JwtUtil {
     }
 
     // Extract username from JWT
-    public String getUsername(String token) {
+    public static String getUsername(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -54,7 +54,7 @@ public class JwtUtil {
     }
 
     // Extract roles from JWT
-    public List<String> getRoles(String token) {
+    public static List<String> getRoles(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -68,7 +68,7 @@ public class JwtUtil {
         }
     }
 
-    public boolean validateToken(String token) {
+    public static boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
@@ -76,5 +76,4 @@ public class JwtUtil {
             return false;
         }
     }
-
 }
