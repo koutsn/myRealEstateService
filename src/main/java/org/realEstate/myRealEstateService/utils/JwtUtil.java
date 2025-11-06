@@ -17,7 +17,13 @@ import java.util.List;
 public class JwtUtil {
 
     // Secret key for signing the JWT (keep it safe!)
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    //private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    private final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey";
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    }
 
     // Token validity in milliseconds (e.g., 1 hour)
     private final long jwtExpirationMs = 3600000;
@@ -29,7 +35,7 @@ public class JwtUtil {
                 .setIssuedAt(new Date())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -37,7 +43,7 @@ public class JwtUtil {
     public String getUsername(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody()
@@ -51,7 +57,7 @@ public class JwtUtil {
     public List<String> getRoles(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
@@ -59,6 +65,15 @@ public class JwtUtil {
             return claims.get("roles", List.class);
         } catch (JwtException | IllegalArgumentException e) {
             return null;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
         }
     }
 
