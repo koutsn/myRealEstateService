@@ -1,5 +1,6 @@
 package org.realEstate.myRealEstateService.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -32,12 +33,24 @@ public class JwtUtil {
     }
 
     // Extract username from JWT
-    public String extractUsername(String token) {
+    public String getUsername(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(String.valueOf(key))
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
+
+    // Extract roles from JWT
+    public List<String> getRoles(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("roles", List.class);
+    }
+
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -19,9 +20,9 @@ public class LoginService {
 
             String token = jwtUtil.generateToken(username, roles);
 
-            //String user = jwtUtil.extractUsername(token);
+            String user = jwtUtil.getUsername(token);
 
-            //println("Authenticated user: " + user);
+            List<String> user_roles = jwtUtil.getRoles(token);
 
             return token;
         }
