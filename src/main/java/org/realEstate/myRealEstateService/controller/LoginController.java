@@ -26,6 +26,9 @@ public class LoginController implements LoginApi {
 
         String token = loginService.login(loginUserRequest.getUsername(), loginUserRequest.getPassword());
 
+        if (token == null) {
+            return ResponseEntity.status(401).build();
+        }
         LoginUser200Response loginUser200Response = new LoginUser200Response();
         loginUser200Response.setToken(token);
         return ResponseEntity.ok(loginUser200Response);

@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     public String login(String username, String password) {
-        return "dummy-token";
+        if ("user".equals(username) && "password".equals(password)) {
+            return "valid-token";
+        }
+        return null;
     }
 
 }
