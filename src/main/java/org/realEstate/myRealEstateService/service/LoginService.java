@@ -14,12 +14,11 @@ public class LoginService {
     public String login(String username, String password) {
         if ("test_user".equals(username) && "password".equals(password)) {
             List<String> roles = List.of("USER");
-
             String token = JwtUtil.generateToken(username, roles);
-
-            //String user = jwtUtil.getUsername(token);
-            //List<String> user_roles = jwtUtil.getRoles(token);
-
+            return token;
+        } else if ("test_user2".equals(username) && "password".equals(password)) {
+            List<String> roles = List.of("ADMIN");
+            String token = JwtUtil.generateToken(username, roles);
             return token;
         }
         return null;
