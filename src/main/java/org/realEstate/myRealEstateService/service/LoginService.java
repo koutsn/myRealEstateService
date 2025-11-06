@@ -20,9 +20,8 @@ public class LoginService {
 
             String token = jwtUtil.generateToken(username, roles);
 
-            String user = jwtUtil.getUsername(token);
-
-            List<String> user_roles = jwtUtil.getRoles(token);
+            //String user = jwtUtil.getUsername(token);
+            //List<String> user_roles = jwtUtil.getRoles(token);
 
             return token;
         }
