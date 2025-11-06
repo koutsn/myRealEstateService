@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -16,31 +17,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    // Secret key for signing the JWT (keep it safe!)
-    //private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Value("${jwt.secret}")
+    private  String secret;
 
-    private static final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey";
+    @Value("${jwt.expiration}")
+    private  long expirationMs;
 
-    private static Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    private  Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // Token validity in milliseconds (e.g., 1 hour)
-    private final static long jwtExpirationMs = 3600000;
-
     // Generate JWT token
-    public static String generateToken(String username, List<String> roles) {
+    public  String generateToken(String username, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .claim("roles", roles)
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // Extract username from JWT
-    public static String getUsername(String token) {
+    public  String getUsername(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -54,7 +53,7 @@ public class JwtUtil {
     }
 
     // Extract roles from JWT
-    public static List<String> getRoles(String token) {
+    public  List<String> getRoles(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -68,7 +67,7 @@ public class JwtUtil {
         }
     }
 
-    public static boolean validateToken(String token) {
+    public  boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
