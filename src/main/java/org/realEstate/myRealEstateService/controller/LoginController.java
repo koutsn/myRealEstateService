@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.myRealEstate.api.LoginApi;
 import org.myRealEstate.model.LoginUser200Response;
 import org.myRealEstate.model.LoginUserRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
