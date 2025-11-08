@@ -1,6 +1,7 @@
 package org.realEstate.myRealEstateService.service;
 
 import lombok.RequiredArgsConstructor;
+import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ public class LoginService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String login(String username, String password) {
+    public String login(String username, String password) throws CustomException {
         if ("test_user".equals(username) && "password".equals(password)) {
             List<String> roles = List.of("USER");
             String token = jwtUtil.generateToken(username, roles);
@@ -24,7 +25,7 @@ public class LoginService {
             String token = jwtUtil.generateToken(username, roles);
             return token;
         }
-        return null;
+        throw new CustomException("Invliad username or password");
     }
 
 }
