@@ -12,8 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoginService {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
     public String login(String username, String password) throws CustomException {
         if ("test_user".equals(username) && "password".equals(password)) {

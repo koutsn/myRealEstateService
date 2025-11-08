@@ -4,10 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.myRealEstate.api.LoginApi;
 import org.myRealEstate.model.LoginUser200Response;
-import org.myRealEstate.model.LoginUser400Response;
 import org.myRealEstate.model.LoginUserRequest;
+import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.LoginService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("${spring.application.name}")
+@RequiredArgsConstructor
 public class LoginController implements LoginApi {
 
-    @Autowired
-    private LoginService loginService;
+    private final LoginService loginService;
 
     @Override
     @PostMapping("/login")
@@ -30,7 +28,10 @@ public class LoginController implements LoginApi {
         try {
             token = loginService.login(loginUserRequest.getUsername(), loginUserRequest.getPassword());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
         }
         LoginUser200Response loginUser200Response = new LoginUser200Response();
         loginUser200Response.setToken(token);
