@@ -9,8 +9,6 @@ import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.utils.Encrypt;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.parser.Entity;
-
 @Component
 @RequiredArgsConstructor
 public class userMapperImpl implements UserMapper  {
@@ -31,12 +29,13 @@ public class userMapperImpl implements UserMapper  {
     public UserEntity requestToEntity(RegisterUserRequest request) {
         return UserEntity.builder()
                 .username(request.getUsername())
-                .password(request.getPassword())
+                .password(encrypt.encryptPassword(request.getPassword()))
                 .email(request.getEmail())
                 .lastName(request.getLastName())
                 .firstName(request.getFirstName())
                 .roles(Role.valueOf(request.getRole().toString()))
                 .status(Status.valueOf(request.getStatus().toString()))
                 .build();
+
     }
 }

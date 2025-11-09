@@ -6,8 +6,9 @@ import org.myRealEstate.model.RegisterUserRequest;
 import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.repository.UserRepository;
+import org.springframework.stereotype.Component;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     UserMapper mapper = Mappers.getMapper(UserMapper.class);
