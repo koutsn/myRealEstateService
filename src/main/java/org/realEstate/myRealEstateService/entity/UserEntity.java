@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.realEstate.myRealEstateService.Enum.Role;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class UserEntity {
 
@@ -23,7 +25,7 @@ public class UserEntity {
     private String email;
     private String firstName;
     private String lastName;
-    private List<Role> roles;
+    private Role roles;
     private Status status;
 
 }
