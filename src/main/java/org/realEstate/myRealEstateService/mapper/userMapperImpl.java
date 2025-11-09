@@ -36,6 +36,7 @@ public class userMapperImpl implements UserMapper  {
                 .roles(Role.valueOf(request.getRole().toString()))
                 .status(Status.valueOf(request.getStatus().toString()))
                 .build();
-
     }
+
+
 }

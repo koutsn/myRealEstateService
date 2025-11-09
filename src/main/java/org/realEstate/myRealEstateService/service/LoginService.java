@@ -3,7 +3,6 @@ package org.realEstate.myRealEstateService.service;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.utils.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
