@@ -2,9 +2,7 @@ package org.realEstate.myRealEstateService.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.myRealEstate.api.LoginApi;
 import org.myRealEstate.model.LoginUser200Response;
-import org.myRealEstate.model.LoginUserRequest;
 import org.realEstate.myRealEstateService.dto.LoginDto;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.LoginService;
