@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.myRealEstate.api.RegisterApi;
 import org.myRealEstate.model.RegisterUserRequest;
 import org.realEstate.myRealEstateService.dto.UserDto;
+import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.RegisterService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,9 +24,16 @@ public class RegisterController {
 
     @PostMapping("/register")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity registerUser(@Valid @RequestBody UserDto userDto) {
 
-        registerService.registerUser(userDto);
-        return ResponseEntity.created(null).build();
+        try {
+            registerService.registerUser(userDto);
+            return ResponseEntity.created(null).build();
+        } catch (Exception e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(response);
+        }
     }
 }

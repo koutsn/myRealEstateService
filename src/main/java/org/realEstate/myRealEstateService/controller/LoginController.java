@@ -26,14 +26,14 @@ public class LoginController {
         String token;
         try {
             token = loginService.login(loginDto.getUsername(), loginDto.getPassword());
+            LoginUser200Response loginUser200Response = new LoginUser200Response();
+            loginUser200Response.setToken(token);
+            return ResponseEntity.ok(loginUser200Response);
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
-        LoginUser200Response loginUser200Response = new LoginUser200Response();
-        loginUser200Response.setToken(token);
-        return ResponseEntity.ok(loginUser200Response);
     }
 }
