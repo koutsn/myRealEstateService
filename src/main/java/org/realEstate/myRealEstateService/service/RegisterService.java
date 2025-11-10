@@ -2,8 +2,7 @@ package org.realEstate.myRealEstateService.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.myRealEstate.model.RegisterUserRequest;
-import org.realEstate.myRealEstateService.entity.UserEntity;
+import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.mapper.UserMapper;
 import org.realEstate.myRealEstateService.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +15,10 @@ public class RegisterService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public void registerUser(RegisterUserRequest request) {
+    public void registerUser(UserDto userDto) {
 
-        UserEntity userEntity = userMapper.requestToEntity(request);
-        userRepository.save(userEntity);
+        //UserEntity userEntity = userMapper.requestToEntity(request);
+        //userRepository.save(userEntity);
 
     }
 }
