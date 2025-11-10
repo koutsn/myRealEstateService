@@ -2,6 +2,7 @@ package org.realEstate.myRealEstateService.service;
 
 import org.junit.jupiter.api.Test;
 import org.myRealEstate.model.RegisterUserRequest;
+import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,10 +20,12 @@ class RegisterServiceIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
+    private String username = "username";
+
     @Test
     void registerUser() {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-        registerUserRequest.setUsername("username");
+        registerUserRequest.setUsername(username);
         registerUserRequest.setPassword("password");
         registerUserRequest.setEmail("email@yahoo.com");
         registerUserRequest.setFirstName("firstName");
@@ -30,6 +33,10 @@ class RegisterServiceIntegrationTest {
         registerUserRequest.setRole(RegisterUserRequest.RoleEnum.USER);
         registerUserRequest.setStatus(RegisterUserRequest.StatusEnum.ACTIVE);
         registerService.registerUser(registerUserRequest);
+
+        UserEntity user = userRepository.findByUsername(username);
+        //wsassertEquals(username, user.getUsername());
+
     }
 
 }
