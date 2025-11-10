@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.myRealEstate.model.LoginUser200Response;
 import org.realEstate.myRealEstateService.dto.LoginDto;
+import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.LoginService;
 import org.springframework.http.HttpStatus;
@@ -29,11 +30,17 @@ public class LoginController {
             LoginUser200Response loginUser200Response = new LoginUser200Response();
             loginUser200Response.setToken(token);
             return ResponseEntity.ok(loginUser200Response);
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(response);
+        } catch (Exception e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
+
     }
 }

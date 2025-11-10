@@ -2,6 +2,7 @@ package org.realEstate.myRealEstateService.service;
 
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.exception.CustomException;
+import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public class LoginService {
 
     private final JwtUtil jwtUtil;
 
-    public String login(String username, String password) throws CustomException {
+    public String login(String username, String password) throws UnauthorizedException {
         if ("test_user".equals(username) && "password".equals(password)) {
             List<String> roles = List.of("USER");
             String token = jwtUtil.generateToken(username, roles);
@@ -23,7 +24,7 @@ public class LoginService {
             String token = jwtUtil.generateToken(username, roles);
             return token;
         }
-        throw new CustomException("Invliad username or password");
+        throw new UnauthorizedException("Invliad username or password");
     }
 
 }

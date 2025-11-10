@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.myRealEstate.api.RegisterApi;
 import org.myRealEstate.model.RegisterUserRequest;
 import org.realEstate.myRealEstateService.dto.UserDto;
+import org.realEstate.myRealEstateService.exception.CustomException;
+import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.RegisterService;
 import org.springframework.http.HttpStatus;
