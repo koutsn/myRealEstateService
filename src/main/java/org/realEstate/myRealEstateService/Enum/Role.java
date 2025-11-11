@@ -2,6 +2,7 @@ package org.realEstate.myRealEstateService.Enum;
 
 public enum Role {
     USER("USER"),
+    MANAGER("MANAGER"),
     ADMIN("ADMIN");
 
     private final String value;
