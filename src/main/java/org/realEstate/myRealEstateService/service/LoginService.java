@@ -2,7 +2,6 @@ package org.realEstate.myRealEstateService.service;
 
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.entity.UserEntity;
-import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.repository.UserRepository;
 import org.realEstate.myRealEstateService.utils.Encrypt;
