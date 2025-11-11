@@ -3,6 +3,9 @@ package org.realEstate.myRealEstateService.service;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.realEstate.myRealEstateService.Enum.Role;
 import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
@@ -13,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.realEstate.myRealEstateService.Enum.Role.*;
 import static org.realEstate.myRealEstateService.Enum.Status.*;
 
 @SpringBootTest
@@ -29,14 +31,14 @@ class RegisterServiceIntegrationTest {
 
     private String username = "username";
 
-    UserDto createUserDto() {
+    UserDto createUserDto(Role role) {
         UserDto userDto = new UserDto();
         userDto.setUsername(username);
         userDto.setPassword("password");
         userDto.setEmail("email@yahoo.com");
         userDto.setFirstName("firstName");
         userDto.setLastName("lastName");
-        userDto.setRole(USER);
+        userDto.setRole(role);
         userDto.setStatus(ACTIVE);
         return userDto;
     }
@@ -46,11 +48,14 @@ class RegisterServiceIntegrationTest {
         userRepository.deleteAll();
     }
 
-    @Test
     @SneakyThrows
-    void registerUser() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"USER", "MANAGER", "ADMIN"})
+    void registerUser(Role role) {
 
-        UserDto userDto = createUserDto();
+        userRepository.deleteAll();
+
+        UserDto userDto = createUserDto(role);
 
         registerService.registerUser(userDto);
 
@@ -61,15 +66,15 @@ class RegisterServiceIntegrationTest {
         assertEquals("email@yahoo.com", user.get().getEmail());
         assertEquals("firstName", user.get().getFirstName());
         assertEquals("lastName", user.get().getLastName());
-        assertEquals("USER", user.get().getRole());
+        assertEquals(role.toString(), user.get().getRole());
         assertEquals("ACTIVE", user.get().getStatus());
     }
 
     @Test
     void registerUser_shouldThrowWhenUserAlreadyExists() {
-        registerUser();
+        registerUser(Role.USER);
 
-        UserDto userDto = createUserDto();
+        UserDto userDto = createUserDto(Role.USER);
 
         Exception exception = assertThrows(
                 CustomException.class,
