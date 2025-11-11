@@ -65,7 +65,6 @@ class RegisterServiceIntegrationTest {
         assertEquals("ACTIVE", user.get().getStatus());
     }
 
-
     @Test
     void registerUser_shouldThrowWhenUserAlreadyExists() {
         registerUser();
