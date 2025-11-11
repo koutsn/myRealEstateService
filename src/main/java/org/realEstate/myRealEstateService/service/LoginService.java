@@ -10,6 +10,7 @@ import org.realEstate.myRealEstateService.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,14 +25,17 @@ public class LoginService {
 
     public String login(String username, String password) throws UnauthorizedException {
 
+        List<String> roles = new ArrayList<>();
         if ("super".equals(username) && userPass.equals(password)) {
-            String token = jwtUtil.generateToken(username, "ADMIN");
+            roles.add("ADMIN");
+            String token = jwtUtil.generateToken(username, roles);
             return token;
         }
 
-        UserEntity user = userRepository.findByUsernameAndPassword(username, Encrypt.encryptPassword(password)).orElse(null);
-        if (user != null && user.getUsername() != null && user.getRole() != null) {
-            return jwtUtil.generateToken(user.getUsername(), user.getRole());
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+        if (user != null && user.getPassword() != null && Encrypt.checkPassword(password, user.getPassword())) {
+            roles.add(user.getRole());
+            return jwtUtil.generateToken(user.getUsername(), roles);
         }
         throw new UnauthorizedException("Invliad username or password");
     }
