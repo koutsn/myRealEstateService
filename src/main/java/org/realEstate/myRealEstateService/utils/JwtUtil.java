@@ -28,11 +28,11 @@ public class JwtUtil {
     }
 
     // Generate JWT token
-    public  String generateToken(String username, List<String> roles) {
+    public  String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .claim("roles", roles)
+                .claim("roles", role)
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();

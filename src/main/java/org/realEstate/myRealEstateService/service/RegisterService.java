@@ -19,7 +19,7 @@ public class RegisterService {
 
     public void registerUser(UserDto userDto) throws CustomException {
 
-        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername());
+        UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElse(null);
         if  (userEntity != null && userEntity.getUsername() != null)
         {
             throw new CustomException("User already exists");
