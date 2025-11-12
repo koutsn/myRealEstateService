@@ -6,7 +6,7 @@ import org.myRealEstate.model.LoginUser200Response;
 import org.realEstate.myRealEstateService.dto.LoginDto;
 import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
-import org.realEstate.myRealEstateService.service.LoginService;
+import org.realEstate.myRealEstateService.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final LoginService loginService;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity loginUser(@Valid @RequestBody LoginDto loginDto) {
 
         String token;
         try {
-            token = loginService.login(loginDto.getUsername(), loginDto.getPassword());
+            token = userService.login(loginDto.getUsername(), loginDto.getPassword());
             LoginUser200Response loginUser200Response = new LoginUser200Response();
             loginUser200Response.setToken(token);
             return ResponseEntity.ok(loginUser200Response);

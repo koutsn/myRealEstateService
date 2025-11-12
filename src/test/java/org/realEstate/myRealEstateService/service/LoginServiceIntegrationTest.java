@@ -22,13 +22,10 @@ import static org.realEstate.myRealEstateService.Enum.Status.ACTIVE;
 class LoginServiceIntegrationTest {
 
     @Autowired
-    RegisterService registerService;
-
-    @Autowired
     UserRepository userRepository;
 
     @Autowired
-    LoginService loginService;
+    private UserService userService;
 
     private String username = "username";
     private String password = "password";
@@ -56,20 +53,20 @@ class LoginServiceIntegrationTest {
     void setUp() {
         userRepository.deleteAll();
         UserDto userDto = createUserDto();
-        registerService.registerUser(userDto);
+        userService.registerUser(userDto);
     }
 
     @Test
     @SneakyThrows
     void loginUser() {
-        String token = loginService.login(username, password);
+        String token = userService.login(username, password);
         assertNotNull(token);
     }
 
     @Test
     @SneakyThrows
     void loginAsSuperUser() {
-        String token = loginService.login(suoerUsername, superPassword);
+        String token = userService.login(suoerUsername, superPassword);
         assertNotNull(token);
     }
 
@@ -78,10 +75,10 @@ class LoginServiceIntegrationTest {
         Exception exception = assertThrows(
                 UnauthorizedException.class,
                 () -> {
-                    loginService.login(username, invalidPassword);
+                    userService.login(username, invalidPassword);
                 }
         );
-        assertEquals("Invliad username or password", exception.getMessage());
+        assertEquals("Invalid username or password", exception.getMessage());
     }
 
 }

@@ -24,10 +24,10 @@ import static org.realEstate.myRealEstateService.Enum.Status.*;
 class RegisterServiceIntegrationTest {
 
     @Autowired
-    RegisterService registerService;
+    UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     private String username = "username";
 
@@ -57,7 +57,7 @@ class RegisterServiceIntegrationTest {
 
         UserDto userDto = createUserDto(role);
 
-        registerService.registerUser(userDto);
+        userService.registerUser(userDto);
 
         Optional<UserEntity> user = userRepository.findByUsername(username);
         assertNotNull(user);
@@ -79,7 +79,7 @@ class RegisterServiceIntegrationTest {
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
-                    registerService.registerUser(userDto);
+                    userService.registerUser(userDto);
                 }
         );
         assertEquals("User already exists", exception.getMessage());
