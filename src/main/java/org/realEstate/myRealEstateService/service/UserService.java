@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,4 +56,12 @@ public class UserService {
         userRepository.save(userEntitySave);
 
     }
+
+    public  List<UserDto> getAllUsers() {
+        List<UserEntity> users = userRepository.findAll();
+        return users.stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -9,19 +9,23 @@ import org.realEstate.myRealEstateService.Enum.Role;
 import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
+import org.realEstate.myRealEstateService.exception.UnauthorizedException;
 import org.realEstate.myRealEstateService.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.realEstate.myRealEstateService.Enum.Status.*;
+import static org.realEstate.myRealEstateService.Enum.Status.ACTIVE;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class RegisterServiceIntegrationTest {
+class UserServiceTest {
 
     @Autowired
     UserRepository userRepository;
@@ -30,6 +34,13 @@ class RegisterServiceIntegrationTest {
     UserService userService;
 
     private String username = "username";
+    private String password = "password";
+
+    private String invalidPassword = "invsslidPassword";
+
+    private String suoerUsername = "super";
+    @Value("${super.password}")
+    private String superPassword = "password";
 
     UserDto createUserDto(Role role) {
         UserDto userDto = new UserDto();
@@ -44,8 +55,11 @@ class RegisterServiceIntegrationTest {
     }
 
     @BeforeEach
+    @SneakyThrows
     void setUp() {
         userRepository.deleteAll();
+        UserDto userDto = createUserDto(Role.USER);
+        userService.registerUser(userDto);
     }
 
     @SneakyThrows
@@ -83,5 +97,30 @@ class RegisterServiceIntegrationTest {
                 }
         );
         assertEquals("User already exists", exception.getMessage());
+    }
+
+    @Test
+    @SneakyThrows
+    void loginUser() {
+        String token = userService.login(username, password);
+        assertNotNull(token);
+    }
+
+    @Test
+    @SneakyThrows
+    void loginAsSuperUser() {
+        String token = userService.login(suoerUsername, superPassword);
+        assertNotNull(token);
+    }
+
+    @Test
+    void loginUserInvalidPassword() {
+        Exception exception = assertThrows(
+                UnauthorizedException.class,
+                () -> {
+                    userService.login(username, invalidPassword);
+                }
+        );
+        assertEquals("Invalid username or password", exception.getMessage());
     }
 }
