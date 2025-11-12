@@ -172,4 +172,25 @@ class UserServiceTest {
         );
         assertEquals("User does not exist", exception.getMessage());
     }
+
+    @Test
+    @SneakyThrows
+    void deleteUser() {
+        List<UserEntity> user = userRepository.findAll();
+        assertEquals(1, user.size());
+        userService.deleteUserByUsername(username);
+        List<UserEntity> deletedUser = userRepository.findAll();
+        assertEquals(0, deletedUser.size());
+    }
+
+    @Test
+    void deleteNonExistentUser() {
+        Exception exception = assertThrows(
+                CustomException.class,
+                () -> {
+                    userService.deleteUserByUsername("nonExistentUser");
+                }
+        );
+        assertEquals("User does not exist", exception.getMessage());
+    }
 }

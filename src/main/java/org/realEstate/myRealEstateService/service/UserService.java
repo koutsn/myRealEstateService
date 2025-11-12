@@ -12,8 +12,10 @@ import org.realEstate.myRealEstateService.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +46,7 @@ public class UserService {
         throw new UnauthorizedException("Invalid username or password");
     }
 
+    @Transient
     public void registerUser(UserDto userDto) throws CustomException {
 
         UserEntity userEntity = userRepository.findByUsername(userDto.getUsername()).orElse(null);
@@ -70,5 +73,15 @@ public class UserService {
             throw new CustomException("User does not exist");
         }
         return userMapper  .toDto(userEntity);
+    }
+
+    @Transient
+    public void deleteUserByUsername(String username) throws CustomException
+    {
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            throw new CustomException("User does not exist");
+        }
+        userRepository.delete(user);
     }
 }
