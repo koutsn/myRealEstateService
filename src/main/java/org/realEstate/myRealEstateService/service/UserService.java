@@ -60,7 +60,7 @@ public class UserService {
 
     }
 
-    public  List<UserDto> getAllUsers()  throws CustomException{
+    public  List<UserDto> getAllUsers() {
         List<UserEntity> users = userRepository.findAll();
         return users.stream()
                 .map(userMapper::toDto)
