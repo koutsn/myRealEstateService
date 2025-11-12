@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.realEstate.myRealEstateService.Enum.Role;
+import org.realEstate.myRealEstateService.Enum.Status;
 import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
@@ -17,9 +18,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.realEstate.myRealEstateService.Enum.Status.ACTIVE;
 
 @SpringBootTest
@@ -42,15 +45,16 @@ class UserServiceTest {
     @Value("${super.password}")
     private String superPassword = "password";
 
-    UserDto createUserDto(Role role) {
+    UserDto createUserDto(Role role, String username, String password, String email,
+                          String firstName, String lastName, Status status) {
         UserDto userDto = new UserDto();
         userDto.setUsername(username);
-        userDto.setPassword("password");
-        userDto.setEmail("email@yahoo.com");
-        userDto.setFirstName("firstName");
-        userDto.setLastName("lastName");
+        userDto.setPassword(password);
+        userDto.setEmail(email);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
         userDto.setRole(role);
-        userDto.setStatus(ACTIVE);
+        userDto.setStatus(status);
         return userDto;
     }
 
@@ -58,7 +62,7 @@ class UserServiceTest {
     @SneakyThrows
     void setUp() {
         userRepository.deleteAll();
-        UserDto userDto = createUserDto(Role.USER);
+        UserDto userDto = createUserDto(Role.USER, username, password, "email@yahoo.com", "firstName", "lastName", ACTIVE);
         userService.registerUser(userDto);
     }
 
@@ -69,7 +73,7 @@ class UserServiceTest {
 
         userRepository.deleteAll();
 
-        UserDto userDto = createUserDto(role);
+        UserDto userDto = createUserDto(role, username, password, "email@yahoo.com", "firstName", "lastName", ACTIVE);
 
         userService.registerUser(userDto);
 
@@ -87,9 +91,7 @@ class UserServiceTest {
     @Test
     void registerUser_shouldThrowWhenUserAlreadyExists() {
         registerUser(Role.USER);
-
-        UserDto userDto = createUserDto(Role.USER);
-
+        UserDto userDto = createUserDto(Role.USER, username, password, "email@yahoo.com", "firstName", "lastName", ACTIVE);
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
@@ -122,5 +124,52 @@ class UserServiceTest {
                 }
         );
         assertEquals("Invalid username or password", exception.getMessage());
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllUsers() {
+        UserDto userDto = createUserDto(Role.ADMIN, username + "2", password, "email2@yahoo.com", "firstName2", "lastName2", ACTIVE);
+
+        userService.registerUser(userDto);
+
+        List<UserDto> userDtos = userService.getAllUsers();
+        assertNotNull(userDtos);
+        assertEquals(2, userDtos.stream().count());
+
+        assertEquals("username", userDtos.get(0).getUsername());
+        assertEquals("email@yahoo.com", userDtos.get(0).getEmail());
+        assertEquals("firstName", userDtos.get(0).getFirstName());
+        assertEquals("lastName", userDtos.get(0).getLastName());
+        assertEquals(Role.USER, userDtos.get(0).getRole());
+        assertEquals(ACTIVE, userDtos.get(0).getStatus());
+    }
+
+    @Test
+    @SneakyThrows
+    void getUserByUsername() {
+        UserDto userDto = createUserDto(Role.ADMIN, username + "2", password, "email2@yahoo.com", "firstName2", "lastName2", ACTIVE);
+        userService.registerUser(userDto);
+
+        UserDto userDtos = userService.getUserByUsername(username);
+
+        assertNotNull(userDtos);
+        assertEquals("username", userDtos.getUsername());
+        assertEquals("email@yahoo.com", userDtos.getEmail());
+        assertEquals("firstName", userDtos.getFirstName());
+        assertEquals("lastName", userDtos.getLastName());
+        assertEquals(Role.USER, userDtos.getRole());
+        assertEquals(ACTIVE, userDtos.getStatus());
+    }
+
+    @Test
+    void getNotExistentUser() {
+        Exception exception = assertThrows(
+                CustomException.class,
+                () -> {
+                    userService.getUserByUsername("wrongUsername");
+                }
+        );
+        assertEquals("User does not exist", exception.getMessage());
     }
 }

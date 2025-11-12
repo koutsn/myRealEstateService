@@ -57,11 +57,18 @@ public class UserService {
 
     }
 
-    public  List<UserDto> getAllUsers() {
+    public  List<UserDto> getAllUsers()  throws CustomException{
         List<UserEntity> users = userRepository.findAll();
         return users.stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
+    public UserDto getUserByUsername(String username) throws CustomException {
+        UserEntity userEntity = userRepository.findByUsername(username).orElse(null);
+        if  (userEntity == null) {
+            throw new CustomException("User does not exist");
+        }
+        return userMapper  .toDto(userEntity);
+    }
 }
