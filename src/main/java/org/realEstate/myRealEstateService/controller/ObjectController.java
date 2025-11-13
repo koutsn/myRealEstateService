@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${spring.application.name}")
@@ -21,7 +23,7 @@ public class ObjectController {
             value = "/object/{id}/images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<?> createImage(@PathVariable String id, @ModelAttribute ObjecFilesDto files) {
+    public ResponseEntity<?> createImage(@PathVariable UUID id, @ModelAttribute ObjecFilesDto files) {
         try {
             objectService.uploadImages(id, files);
             return ResponseEntity.created(null).build();

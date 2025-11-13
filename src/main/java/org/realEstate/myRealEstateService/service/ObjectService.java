@@ -3,6 +3,7 @@ package org.realEstate.myRealEstateService.service;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
 import org.realEstate.myRealEstateService.exception.CustomException;
+import org.realEstate.myRealEstateService.mapper.ObjectFileMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,15 @@ public class ObjectService {
 
     private static final String UPLOAD_DIR = "uploads/";
 
-    public void uploadImages(String id, ObjecFilesDto files) throws CustomException {
+    private final ObjectFileMapper mapper;
+
+    //private final ObjectFilesRepository repository;
+
+    //public void saveFileINDb(String id, ObjecFilesDto files) {
+    //    files.setObjectId(id);
+    //}
+
+    public void uploadImages(UUID id, ObjecFilesDto files) throws CustomException {
         List<String> fileNames = new ArrayList<>();
         String fileName = "";
         try {
