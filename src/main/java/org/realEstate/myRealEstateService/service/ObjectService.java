@@ -46,7 +46,7 @@ public class ObjectService {
             for (MultipartFile file : files.getFile()) {
                 if (!file.isEmpty()) {
                     // write in file-system
-                    fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    fileName = System.currentTimeMillis() + counter + "_" + file.getOriginalFilename();
                     Path filePath = Paths.get(UPLOAD_DIR, fileName);
                     Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                     fileNames.add(fileName);
