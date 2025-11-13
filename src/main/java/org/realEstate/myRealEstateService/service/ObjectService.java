@@ -57,7 +57,11 @@ public class ObjectService {
                     counter++;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            try {
+                Files.delete(Paths.get(UPLOAD_DIR, fileName));
+            }
+            catch (IOException ex) {}
             throw new CustomException("Could not upload file: " + fileName + ",Error:" + e.getMessage());
         }
     }
