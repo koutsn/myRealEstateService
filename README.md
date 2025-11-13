@@ -5,6 +5,7 @@ A Service shows a list of objects and their status
 
 ## Users
 A user can be registered and logged in to the service. 
+
 A user can have one of two roles: USER or ADMIN.
 A user can only be created or deleted from an ADMIN
 
