@@ -1,7 +1,7 @@
 # A Real Estate Service
 
 ## Purpose
-A Service shows a list of objects and their status
+A Service that is used in order to create, delete, return a list of objects
 
 ## Users
 A user can be registered and logged in to the service. 
