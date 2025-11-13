@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${spring.application.name}")
-public class userController {
+public class UserController {
 
     private final UserService userService;
 
