@@ -6,6 +6,7 @@ import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.mapper.ObjectFileMapper;
 import org.realEstate.myRealEstateService.repository.ObjectFilesRepository;
+import org.realEstate.myRealEstateService.utils.File;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,11 +23,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ObjectService {
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = "images/";
 
     private final ObjectFileMapper mapper;
 
     private final ObjectFilesRepository repository;
+
+    private final File fileValidator;
 
     private void saveFileInDB(UUID id, String name, String fileName) {
         ObjectFilesEntity fileEntity = mapper.toEntity(id, name, fileName);
@@ -65,6 +68,9 @@ public class ObjectService {
 
             for (MultipartFile file : files.getFile()) {
                 if (!file.isEmpty()) {
+                    // Validate File
+                    fileValidator.validateFile(file);
+
                     // write in file-system
                     fileName = System.currentTimeMillis() + counter + "_" + file.getOriginalFilename();
                     Path filePath = Paths.get(UPLOAD_DIR, fileName);
