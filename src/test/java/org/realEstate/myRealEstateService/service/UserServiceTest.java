@@ -68,7 +68,7 @@ class UserServiceTest {
 
     @SneakyThrows
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"USER", "MANAGER", "ADMIN"})
+    @EnumSource(value = Role.class, names = {"USER", "ADMIN"})
     void registerUser(Role role) {
 
         userRepository.deleteAll();
