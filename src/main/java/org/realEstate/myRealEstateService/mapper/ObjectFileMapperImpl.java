@@ -2,7 +2,6 @@ package org.realEstate.myRealEstateService.mapper;
 
 import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -13,7 +12,7 @@ public class ObjectFileMapperImpl implements ObjectFileMapper {
         ObjectFilesEntity objectFilesEntity = new ObjectFilesEntity();
         objectFilesEntity.setObjectId(id);
         objectFilesEntity.setName(name);
-        objectFilesEntity.setFile(fileName);
+        objectFilesEntity.setFileName(fileName);
         return objectFilesEntity;
     }
 }

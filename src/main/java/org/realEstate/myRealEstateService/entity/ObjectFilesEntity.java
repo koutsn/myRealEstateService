@@ -2,9 +2,7 @@ package org.realEstate.myRealEstateService.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
 import java.util.UUID;
@@ -28,6 +26,6 @@ public class ObjectFilesEntity {
     private UUID objectId;
     @Column(name = "name", updatable = true, nullable = false)
     private String name;
-    @Column(name = "file", updatable = true, nullable = false)
-    private String file;
+    @Column(name = "file_name", updatable = true, nullable = false)
+    private String fileName;
 }

@@ -6,9 +6,17 @@ import org.realEstate.myRealEstateService.mapper.ObjectFileMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ObjectFilesRepository extends JpaRepository<ObjectFilesEntity, UUID> {
+
+    Optional<List<ObjectFilesEntity>> findByObjectId(UUID objectId);
+
+    Optional<ObjectFilesEntity> findByName(String name);
+
+    Optional<ObjectFilesEntity> findByFileName(String filename);
+
 }
