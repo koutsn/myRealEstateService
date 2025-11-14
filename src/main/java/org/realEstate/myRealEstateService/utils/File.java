@@ -6,9 +6,7 @@ import org.realEstate.myRealEstateService.exception.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.tika.Tika;
-
 import java.io.IOException;
-import java.net.URLConnection;
 import java.util.List;
 
 @Component
