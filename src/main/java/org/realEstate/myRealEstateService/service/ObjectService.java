@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ObjectService {
 
-    private static final String UPLOAD_DIR = "images/";
+    private final String UPLOAD_DIR = "images/";
 
     private final ObjectFileMapper mapper;
 
@@ -38,8 +38,10 @@ public class ObjectService {
 
     private void deleteFileFromDbAndFS(String fileName) {
         try {
-            Files.deleteIfExists(Paths.get(UPLOAD_DIR, fileName));
-            repository.findByFileName(fileName).ifPresent(repository::delete);
+            if (fileName != null) {
+                Files.deleteIfExists(Paths.get(UPLOAD_DIR, fileName));
+                repository.findByFileName(fileName).ifPresent(repository::delete);
+            }
         } catch (IOException e) {
             System.err.println("Could not erase the file data.Error: " + e.getMessage());
             e.printStackTrace();
@@ -56,23 +58,36 @@ public class ObjectService {
         return name;
     }
 
+    private void uploadChecks(UUID id, ObjecFilesDto files) throws CustomException {
+        if (id == null)
+            throw new CustomException("Object id is null");
+
+        if (files == null)
+            throw new CustomException("Files object is null");
+
+        if (files.getName() == null)
+            throw new CustomException("No file description is given in names");
+
+        if (files.getName().length != files.getFile().length)
+            throw new CustomException("Inconsistency in files and name parameters");
+    }
+
     public void uploadImages(UUID id, ObjecFilesDto files) throws CustomException {
+
+        uploadChecks(id, files);
+
         List<String> fileNames = new ArrayList<>();
         String fileName = "";
         try {
             Files.createDirectories(Paths.get(UPLOAD_DIR));
-
             String[] names = files.getName();
-
             int counter = 0;
-
             for (MultipartFile file : files.getFile()) {
                 if (!file.isEmpty()) {
                     // Validate File
                     fileValidator.validateFile(file);
-
                     // write in file-system
-                    fileName = System.currentTimeMillis() + counter + "_" + file.getOriginalFilename();
+                    fileName = fileValidator.getFilename(file.getOriginalFilename(), counter);
                     Path filePath = Paths.get(UPLOAD_DIR, fileName);
                     Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                     fileNames.add(fileName);

@@ -6,6 +6,7 @@ import org.realEstate.myRealEstateService.exception.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.tika.Tika;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -38,5 +39,9 @@ public class File {
         if (file.getSize() > 5 * 1024 * 1024) {
             throw new CustomException("File too large");
         }
+    }
+
+    public String getFilename(String originalFilename, int counter) {
+        return System.currentTimeMillis() + counter + "_" + originalFilename;
     }
 }
