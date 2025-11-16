@@ -41,7 +41,7 @@ class ObjectServiceIIntegrationTest {
     private ObjectFilesRepository repository;
 
     @MockitoBean
-    private File fileValidatorMock;
+    private File fileMock;
 
     private final ObjecFilesDto filesDto = new ObjecFilesDto();
 
@@ -65,20 +65,13 @@ class ObjectServiceIIntegrationTest {
     String[] names = {"Living room",};
 
     @BeforeEach
+    @SneakyThrows
     void Setup() {
-        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
-
-            // Mock createDirectories
-            mockedFiles.when(() -> Files.createDirectories(Paths.get(UPLOAD_DIR)))
-                    .thenReturn(Paths.get(UPLOAD_DIR));
-
-            // Mock file copies
-            mockedFiles.when(() ->
-                    Files.copy(eq(stream1),
-                            eq(Paths.get(UPLOAD_DIR, "0_test1.jpg")),
-                            eq(REPLACE_EXISTING))
-            ).thenReturn(100L);
-        }
+        doReturn(filename).when(fileMock).getFilename(anyString(), anyInt());
+        doNothing().when(fileMock).validateFile(any(MultipartFile.class));
+        doNothing().when(fileMock).createDir(anyString());
+        doNothing().when(fileMock).copyFile(any(),any());
+        doNothing().when(fileMock).deleteFile(any());
     }
 
     @Test
@@ -88,9 +81,6 @@ class ObjectServiceIIntegrationTest {
         filesDto.setObjectId(id);
         filesDto.setFile(files);
         filesDto.setName(names);
-
-        doReturn(filename).when(fileValidatorMock).getFilename(anyString(), anyInt());
-        doNothing().when(fileValidatorMock).validateFile(any(MultipartFile.class));
 
         // RUN
         objectService.uploadImages(id, filesDto);
@@ -164,15 +154,13 @@ class ObjectServiceIIntegrationTest {
     @Test
     @SneakyThrows
     void uploadImages_error_handling() {
-        // toDo
-        /*
         UUID id = UUID.randomUUID();
         filesDto.setObjectId(id);
         filesDto.setFile(files);
         filesDto.setName(names);
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
-        doReturn(filename).when(fileValidatorMock).getFilename(anyString(), anyInt());
+        doReturn(filename).when(fileMock).getFilename(anyString(), anyInt());
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
 
@@ -188,7 +176,7 @@ class ObjectServiceIIntegrationTest {
             ).thenReturn(100L);
 
             doThrow(new RuntimeException("Validation failed"))
-                    .when(fileValidatorMock)
+                    .when(fileMock)
                     .validateFile(any(MultipartFile.class));
 
             // RUN
@@ -200,11 +188,9 @@ class ObjectServiceIIntegrationTest {
             );
             assertEquals("Could not upload file: ,Error:Validation failed", exception.getMessage());
 
-            mockedFiles.verify(() -> Files.createDirectories(Paths.get(UPLOAD_DIR)));
-            mockedFiles.verify(() -> Files.deleteIfExists(argThat(p -> p.toString().endsWith(filename)))
-            );
-
+            Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(id);
+            assertNotNull(fileEntity);
+            assertEquals(0, fileEntity.get().size());
         }
-        */
     }
 }

@@ -11,10 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +28,7 @@ public class ObjectService {
 
     private final ObjectFilesRepository repository;
 
-    private final File fileValidator;
+    private final File file;
 
     private void saveFileInDB(UUID id, String name, String fileName) {
         ObjectFilesEntity fileEntity = mapper.toEntity(id, name, fileName);
@@ -39,7 +38,8 @@ public class ObjectService {
     private void deleteFileFromDbAndFS(String fileName) {
         try {
             if (fileName != null) {
-                Files.deleteIfExists(Paths.get(UPLOAD_DIR, fileName));
+                file.deleteFile(Paths.get(UPLOAD_DIR, fileName));
+                ;
                 repository.findByFileName(fileName).ifPresent(repository::delete);
             }
         } catch (IOException e) {
@@ -79,17 +79,18 @@ public class ObjectService {
         List<String> fileNames = new ArrayList<>();
         String fileName = "";
         try {
-            Files.createDirectories(Paths.get(UPLOAD_DIR));
+            file.createDir(UPLOAD_DIR);
             String[] names = files.getName();
             int counter = 0;
             for (MultipartFile file : files.getFile()) {
                 if (!file.isEmpty()) {
                     // Validate File
-                    fileValidator.validateFile(file);
+                    this.file.validateFile(file);
                     // write in file-system
-                    fileName = fileValidator.getFilename(file.getOriginalFilename(), counter);
+                    fileName = this.file.getFilename(file.getOriginalFilename(), counter);
                     Path filePath = Paths.get(UPLOAD_DIR, fileName);
-                    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    InputStream dd = file.getInputStream();
+                    this.file.copyFile(file.getInputStream(), filePath);
                     fileNames.add(fileName);
                     // save in
                     String name = getNamee(names, counter);

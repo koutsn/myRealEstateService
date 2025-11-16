@@ -8,6 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.tika.Tika;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Component
@@ -43,5 +48,17 @@ public class File {
 
     public String getFilename(String originalFilename, int counter) {
         return System.currentTimeMillis() + counter + "_" + originalFilename;
+    }
+
+    public void createDir(String dir) throws IOException {
+        Files.createDirectories(Paths.get(dir));
+    }
+
+    public void copyFile(InputStream stream, Path path) throws IOException {
+        Files.copy(stream, path, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void deleteFile(Path pathAndFilename) throws IOException {
+        Files.deleteIfExists(pathAndFilename);
     }
 }
