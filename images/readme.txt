@@ -1,1 +1,0 @@
-Directory used to save the object images

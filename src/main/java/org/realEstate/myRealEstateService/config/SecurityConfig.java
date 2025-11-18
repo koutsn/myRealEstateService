@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // 👈 IMPORTANT
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(loginPath).permitAll()
+                                .requestMatchers("/images/readme.txt").denyAll()
+                                .requestMatchers("/images/**").permitAll()
                                 .anyRequest().authenticated()
                         //.anyRequest().permitAll()
                 )

@@ -7,6 +7,7 @@ import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.mapper.ObjectFileMapper;
 import org.realEstate.myRealEstateService.repository.ObjectFilesRepository;
 import org.realEstate.myRealEstateService.utils.File;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ObjectService {
 
-    private final String UPLOAD_DIR = "images/";
+    @Value("${image.path}")
+    private String UPLOAD_DIR;
+
+    @Value("${image.url}")
+    private String URL;
 
     private final ObjectFileMapper mapper;
 
@@ -30,8 +35,8 @@ public class ObjectService {
 
     private final File file;
 
-    private void saveFileInDB(UUID id, String name, String fileName) {
-        ObjectFilesEntity fileEntity = mapper.toEntity(id, name, fileName);
+    private void saveFileInDB(UUID id, String name, String fileName, String originalFilename, String url) {
+        ObjectFilesEntity fileEntity = mapper.toEntity(id, name, fileName, originalFilename, url);
         repository.save(fileEntity);
     }
 
@@ -87,14 +92,14 @@ public class ObjectService {
                     // Validate File
                     this.file.validateFile(file);
                     // write in file-system
-                    fileName = this.file.getFilename(file.getOriginalFilename(), counter);
+                    fileName = this.file.getFilename(this.file.getFileExt(file));
                     Path filePath = Paths.get(UPLOAD_DIR, fileName);
                     InputStream dd = file.getInputStream();
                     this.file.copyFile(file.getInputStream(), filePath);
                     fileNames.add(fileName);
                     // save in
                     String name = getNamee(names, counter);
-                    saveFileInDB(id, name, fileName);
+                    saveFileInDB(id, name, fileName, file.getOriginalFilename(), URL);
                 }
                 counter++;
             }

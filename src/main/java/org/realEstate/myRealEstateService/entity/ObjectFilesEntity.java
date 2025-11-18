@@ -22,10 +22,14 @@ public class ObjectFilesEntity {
     @Column(name = "id", columnDefinition = "CHAR(36)")
     private UUID id;
     @JdbcTypeCode(SqlTypes.CHAR) // forces CHAR(36)
-    @Column(name = "object_id", updatable = true, nullable = false)
+    @Column(name = "object_id", updatable = false, nullable = false)
     private UUID objectId;
-    @Column(name = "name", updatable = true, nullable = false)
+    @Column(name = "name", updatable = false, nullable = false)
     private String name;
-    @Column(name = "file_name", updatable = true, nullable = false)
+    @Column(name = "file_name", updatable = false, nullable = false)
     private String fileName;
+    @Column(name = "original_filename", updatable = false)
+    private String original_filename;
+    @Column(name = "url", updatable = false)
+    private String url;
 }

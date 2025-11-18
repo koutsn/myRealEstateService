@@ -67,7 +67,7 @@ class ObjectServiceIIntegrationTest {
     @BeforeEach
     @SneakyThrows
     void Setup() {
-        doReturn(filename).when(fileMock).getFilename(anyString(), anyInt());
+        doReturn(filename).when(fileMock).getFilename(anyString());
         doNothing().when(fileMock).validateFile(any(MultipartFile.class));
         doNothing().when(fileMock).createDir(anyString());
         doNothing().when(fileMock).copyFile(any(),any());
@@ -160,7 +160,7 @@ class ObjectServiceIIntegrationTest {
         filesDto.setName(names);
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
-        doReturn(filename).when(fileMock).getFilename(anyString(), anyInt());
+        doReturn(filename).when(fileMock).getFilename(anyString());
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
 

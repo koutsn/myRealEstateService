@@ -9,6 +9,6 @@ import java.util.UUID;
 @Component
 public interface ObjectFileMapper {
 
-    ObjectFilesEntity toEntity(UUID id, String name, String fileName);
+    ObjectFilesEntity toEntity(UUID id, String name, String fileName, String originalFilename, String url);
 
 }
