@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class ObjecFilesDto {
     private UUID objectId;
-    private String[] name;
-    private MultipartFile[] file;
+    private String description;
+    private MultipartFile file;
     private String url;
 }

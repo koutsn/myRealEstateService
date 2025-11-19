@@ -11,7 +11,7 @@ public class ObjectFileMapperImpl implements ObjectFileMapper {
     public ObjectFilesEntity toEntity(UUID id, String name, String fileName, String originalFilename, String url) {
         ObjectFilesEntity objectFilesEntity = new ObjectFilesEntity();
         objectFilesEntity.setObjectId(id);
-        objectFilesEntity.setName(name);
+        objectFilesEntity.setDescription(name);
         objectFilesEntity.setFileName(fileName);
         objectFilesEntity.setOriginal_filename(originalFilename);
         objectFilesEntity.setUrl(url);

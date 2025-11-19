@@ -3,11 +3,9 @@ package org.realEstate.myRealEstateService.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.myRealEstate.model.RegisterUserRequest;
 import org.realEstate.myRealEstateService.dto.UserDto;
 import org.realEstate.myRealEstateService.entity.UserEntity;
 import org.realEstate.myRealEstateService.utils.Encrypt;
-import org.springframework.beans.factory.annotation.Autowired;;
 
 @Mapper(componentModel = "spring", imports = Encrypt.class)
 public interface UserMapper {

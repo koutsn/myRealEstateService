@@ -15,7 +15,7 @@ public interface ObjectFilesRepository extends JpaRepository<ObjectFilesEntity, 
 
     Optional<List<ObjectFilesEntity>> findByObjectId(UUID objectId);
 
-    Optional<ObjectFilesEntity> findByName(String name);
+    Optional<ObjectFilesEntity> findByDescription(String description);
 
     Optional<ObjectFilesEntity> findByFileName(String filename);
 

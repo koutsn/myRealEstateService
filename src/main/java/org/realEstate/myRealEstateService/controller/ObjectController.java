@@ -24,9 +24,9 @@ public class ObjectController {
             value = "/object/{id}/images",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<?> createImage(@PathVariable UUID id, @ModelAttribute ObjecFilesDto files) {
+    public ResponseEntity<?> createImage(@PathVariable UUID id, @ModelAttribute ObjecFilesDto uploadInfo) {
         try {
-            objectService.uploadImages(id, files);
+            objectService.uploadImages(id, uploadInfo);
             return ResponseEntity.created(null).build();
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());

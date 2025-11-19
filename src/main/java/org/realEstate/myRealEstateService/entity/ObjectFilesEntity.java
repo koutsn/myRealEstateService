@@ -24,8 +24,8 @@ public class ObjectFilesEntity {
     @JdbcTypeCode(SqlTypes.CHAR) // forces CHAR(36)
     @Column(name = "object_id", updatable = false, nullable = false)
     private UUID objectId;
-    @Column(name = "name", updatable = false, nullable = false)
-    private String name;
+    @Column(name = "description", updatable = false, nullable = false)
+    private String description;
     @Column(name = "file_name", updatable = false, nullable = false)
     private String fileName;
     @Column(name = "original_filename", updatable = false)

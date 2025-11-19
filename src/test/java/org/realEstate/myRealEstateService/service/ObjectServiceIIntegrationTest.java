@@ -91,7 +91,7 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(fileEntity.get().getFirst().getId());
         assertEquals(id, fileEntity.get().getFirst().getObjectId());
         assertEquals(filename, fileEntity.get().getFirst().getFileName());
-        assertEquals(names[0], fileEntity.get().getFirst().getName());
+        assertEquals(names[0], fileEntity.get().getFirst().getDescription());
     }
 
     @Test
