@@ -64,21 +64,20 @@ public class ObjectService {
     }
 
     public void uploadImages(UUID id, ObjecFilesDto uploadInfo) throws CustomException {
-
         uploadChecks(id, uploadInfo);
 
         String fileName = null;
         try {
+            fileName = this.file.getFilename(this.file.getFileExt(uploadInfo.getFile()));
             this.file.validateFile(uploadInfo.getFile());
             Files.createDirectories(Path.of(UPLOAD_DIR));
-            fileName = this.file.getFilename(this.file.getFileExt(uploadInfo.getFile()));
             Path filePath = Paths.get(UPLOAD_DIR, fileName);
             InputStream inputstream = uploadInfo.getFile().getInputStream();
             this.file.copyFile(inputstream, filePath);
             saveFileInDB(id, uploadInfo.getDescription(), fileName, uploadInfo.getFile().getOriginalFilename(), URL);
         } catch (Exception e) {
             deleteFileFromDbAndFS(fileName);
-            throw new CustomException("Could not uploadInfo uploadInfo: " + fileName + ",Error:" + e.getMessage());
+            throw new CustomException("Could not upload file: " + uploadInfo.getFile().getOriginalFilename() + " ,Error: " + e.getMessage());
         }
     }
 }

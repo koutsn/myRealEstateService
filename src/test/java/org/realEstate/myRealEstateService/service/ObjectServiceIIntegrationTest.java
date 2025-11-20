@@ -47,30 +47,25 @@ class ObjectServiceIIntegrationTest {
 
     private static final String UPLOAD_DIR = "images";
 
-    private final String filename = "file1";
+    private final String FILENAME = "file1.jpeg";
+
+    private final String DESCRIPTION = "living room";
 
     private final InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
 
-    MultipartFile file = new MockMultipartFile(filename,  // name parameter (form field name)
-            filename,             // original filename
+    MultipartFile file = new MockMultipartFile(FILENAME,  // name parameter (form field name)
+            FILENAME,             // original filename
             "image",            // content type
             "test date".getBytes()); // file content as byte[];
-
-    MultipartFile file2 = new MockMultipartFile(filename + "2",  // name parameter (form field name)
-            filename + "2",             // original filename
-            "image",            // content type
-            "test2 date".getBytes());
-
-    MultipartFile[] files = new MultipartFile[]{file};
-    String[] names = {"Living room",};
 
     @BeforeEach
     @SneakyThrows
     void Setup() {
-        doReturn(filename).when(fileMock).getFilename(anyString());
+        doReturn("jpeg").when(fileMock).getFileExt(any());
+        doReturn(FILENAME).when(fileMock).getFilename(anyString());
         doNothing().when(fileMock).validateFile(any(MultipartFile.class));
         doNothing().when(fileMock).createDir(anyString());
-        doNothing().when(fileMock).copyFile(any(),any());
+        doNothing().when(fileMock).copyFile(any(), any());
         doNothing().when(fileMock).deleteFile(any());
     }
 
@@ -79,8 +74,8 @@ class ObjectServiceIIntegrationTest {
     void uploadImages_success() {
         UUID id = UUID.randomUUID();
         filesDto.setObjectId(id);
-        filesDto.setFile(files);
-        filesDto.setName(names);
+        filesDto.setFile(file);
+        filesDto.setDescription(DESCRIPTION);
 
         // RUN
         objectService.uploadImages(id, filesDto);
@@ -90,16 +85,15 @@ class ObjectServiceIIntegrationTest {
         assertEquals(1, fileEntity.get().size());
         assertNotNull(fileEntity.get().getFirst().getId());
         assertEquals(id, fileEntity.get().getFirst().getObjectId());
-        assertEquals(filename, fileEntity.get().getFirst().getFileName());
-        assertEquals(names[0], fileEntity.get().getFirst().getDescription());
+        assertEquals(FILENAME, fileEntity.get().getFirst().getFileName());
     }
 
     @Test
     void uploadImages_no_objectId() {
         UUID id = UUID.randomUUID();
         filesDto.setObjectId(id);
-        filesDto.setFile(files);
-        filesDto.setName(names);
+        filesDto.setFile(file);
+        filesDto.setDescription(DESCRIPTION);
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
@@ -125,7 +119,7 @@ class ObjectServiceIIntegrationTest {
     void uploadImages_no_names() {
         UUID id = UUID.randomUUID();
         filesDto.setObjectId(id);
-        filesDto.setFile(files);
+        filesDto.setFile(file);
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
@@ -136,31 +130,15 @@ class ObjectServiceIIntegrationTest {
     }
 
     @Test
-    void uploadImages_files_names_inconsistency() {
-        MultipartFile[] filesWith2Files = new MultipartFile[]{file, file2};
-        UUID id = UUID.randomUUID();
-        filesDto.setObjectId(id);
-        filesDto.setFile(filesWith2Files);
-        filesDto.setName(names);
-        Exception exception = assertThrows(
-                CustomException.class,
-                () -> {
-                    objectService.uploadImages(id, filesDto);
-                }
-        );
-        assertEquals("Inconsistency in files and name parameters", exception.getMessage());
-    }
-
-    @Test
     @SneakyThrows
     void uploadImages_error_handling() {
         UUID id = UUID.randomUUID();
         filesDto.setObjectId(id);
-        filesDto.setFile(files);
-        filesDto.setName(names);
+        filesDto.setFile(file);
+        filesDto.setDescription(DESCRIPTION);
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
-        doReturn(filename).when(fileMock).getFilename(anyString());
+        doReturn(FILENAME).when(fileMock).getFilename(anyString());
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
 
@@ -186,7 +164,7 @@ class ObjectServiceIIntegrationTest {
                         objectService.uploadImages(id, filesDto);
                     }
             );
-            assertEquals("Could not upload file: ,Error:Validation failed", exception.getMessage());
+            assertEquals("Could not upload file: " + FILENAME + " ,Error: Validation failed", exception.getMessage());
 
             Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(id);
             assertNotNull(fileEntity);
