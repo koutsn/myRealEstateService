@@ -33,8 +33,8 @@ public class ObjectService {
 
     private final File file;
 
-    private void saveFileInDB(UUID id, ObjecFilesDto uploadInfo) {
-        ObjectFilesEntity fileEntity = mapper.toEntity(id, uploadInfo);
+    private void saveFileInDB(ObjecFilesDto uploadInfo) {
+        ObjectFilesEntity fileEntity = mapper.toEntity(uploadInfo);
         repository.save(fileEntity);
     }
 
@@ -67,6 +67,7 @@ public class ObjectService {
         uploadChecks(id, uploadInfo);
 
         try {
+            uploadInfo.setObjectId(id);
             uploadInfo.setFilename(this.file.getFilename(this.file.getFileExt(uploadInfo.getFile())));
             uploadInfo.setUrl(URL);
             this.file.validateFile(uploadInfo.getFile());
@@ -74,7 +75,7 @@ public class ObjectService {
             Path filePath = Paths.get(UPLOAD_DIR, uploadInfo.getFilename());
             InputStream inputstream = uploadInfo.getFile().getInputStream();
             this.file.copyFile(inputstream, filePath);
-            saveFileInDB(id, uploadInfo);
+            saveFileInDB(uploadInfo);
         } catch (Exception e) {
             deleteFileFromDbAndFS(uploadInfo.getFilename());
             throw new CustomException("Could not upload file: " + uploadInfo.getFile().getOriginalFilename() + " ,Error: " + e.getMessage());

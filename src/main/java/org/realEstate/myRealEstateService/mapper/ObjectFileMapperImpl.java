@@ -9,15 +9,13 @@ import java.util.UUID;
 @Component
 public class ObjectFileMapperImpl implements ObjectFileMapper {
     @Override
-    public ObjectFilesEntity toEntity(UUID id, ObjecFilesDto uploadInfo) {
+    public ObjectFilesEntity toEntity(ObjecFilesDto uploadInfo) {
         ObjectFilesEntity objectFilesEntity = new ObjectFilesEntity();
         if (uploadInfo != null) {
-            objectFilesEntity.setObjectId(id);
+            objectFilesEntity.setObjectId(uploadInfo.getObjectId());
             objectFilesEntity.setDescription(uploadInfo.getDescription());
             objectFilesEntity.setFileName(uploadInfo.getFilename());
-            if (uploadInfo.getFile().getOriginalFilename() != null) {
-                objectFilesEntity.setOriginalFilename(uploadInfo.getFile().getOriginalFilename());
-            }
+            objectFilesEntity.setOriginalFilename(uploadInfo.getFile().getOriginalFilename());
             objectFilesEntity.setUrl(uploadInfo.getUrl());
         }
         return objectFilesEntity;

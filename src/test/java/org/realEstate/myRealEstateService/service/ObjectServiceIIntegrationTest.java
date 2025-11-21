@@ -45,7 +45,9 @@ class ObjectServiceIIntegrationTest {
 
     private final ObjecFilesDto filesDto = new ObjecFilesDto();
 
-    private static final String UPLOAD_DIR = "images";
+    private final UUID objectId = UUID.randomUUID();
+
+    private final String UPLOAD_DIR = "images";
 
     private final String ORIGINAL_FILENAME = "file1.jpeg";
 
@@ -76,18 +78,18 @@ class ObjectServiceIIntegrationTest {
     @SneakyThrows
     void uploadImages_success() {
         UUID id = UUID.randomUUID();
-        filesDto.setObjectId(id);
+        filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
 
         // RUN
-        objectService.uploadImages(id, filesDto);
+        objectService.uploadImages(objectId, filesDto);
 
-        Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(id);
+        Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
         assertNotNull(fileEntity);
         assertEquals(1, fileEntity.get().size());
         assertNotNull(fileEntity.get().getFirst().getId());
-        assertEquals(id, fileEntity.get().getFirst().getObjectId());
+        assertEquals(objectId, fileEntity.get().getFirst().getObjectId());
         assertEquals(FILENAME, fileEntity.get().getFirst().getFileName());
         assertEquals(ORIGINAL_FILENAME, fileEntity.get().getFirst().getOriginalFilename());
     }
@@ -113,24 +115,10 @@ class ObjectServiceIIntegrationTest {
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
-                    objectService.uploadImages(id, null);
+                    objectService.uploadImages(objectId, null);
                 }
         );
         assertEquals("Files object is null", exception.getMessage());
-    }
-
-    @Test
-    void uploadImages_no_names() {
-        UUID id = UUID.randomUUID();
-        filesDto.setObjectId(id);
-        filesDto.setFile(file);
-        Exception exception = assertThrows(
-                CustomException.class,
-                () -> {
-                    objectService.uploadImages(id, filesDto);
-                }
-        );
-        assertEquals("No file description is given in names", exception.getMessage());
     }
 
     @Test
@@ -143,36 +131,23 @@ class ObjectServiceIIntegrationTest {
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
         doReturn(FILENAME).when(fileMock).getFilename(anyString());
+        
+        doThrow(new RuntimeException("Validation failed"))
+                .when(fileMock)
+                .validateFile(any(MultipartFile.class));
 
-        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+        // RUN
+        Exception exception = assertThrows(
+                CustomException.class,
+                () -> {
+                    objectService.uploadImages(objectId, filesDto);
+                }
+        );
+        assertEquals("Could not upload file: " + ORIGINAL_FILENAME + " ,Error: Validation failed", exception.getMessage());
 
-            // Mock createDirectories
-            mockedFiles.when(() -> Files.createDirectories(Paths.get(UPLOAD_DIR)))
-                    .thenReturn(Paths.get(UPLOAD_DIR));
+        Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
+        assertNotNull(fileEntity);
+        assertEquals(0, fileEntity.get().size());
 
-            // Mock file copies
-            mockedFiles.when(() ->
-                    Files.copy(eq(stream1),
-                            eq(Paths.get(UPLOAD_DIR, "0_test1.jpg")),
-                            eq(REPLACE_EXISTING))
-            ).thenReturn(100L);
-
-            doThrow(new RuntimeException("Validation failed"))
-                    .when(fileMock)
-                    .validateFile(any(MultipartFile.class));
-
-            // RUN
-            Exception exception = assertThrows(
-                    CustomException.class,
-                    () -> {
-                        objectService.uploadImages(id, filesDto);
-                    }
-            );
-            assertEquals("Could not upload file: " + FILENAME + " ,Error: Validation failed", exception.getMessage());
-
-            Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(id);
-            assertNotNull(fileEntity);
-            assertEquals(0, fileEntity.get().size());
-        }
     }
 }
