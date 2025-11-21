@@ -29,7 +29,7 @@ public class ObjectFilesEntity {
     @Column(name = "file_name", updatable = false, nullable = false)
     private String fileName;
     @Column(name = "original_filename", updatable = false)
-    private String original_filename;
+    private String originalFilename;
     @Column(name = "url", updatable = false)
     private String url;
 }

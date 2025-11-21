@@ -47,16 +47,19 @@ class ObjectServiceIIntegrationTest {
 
     private static final String UPLOAD_DIR = "images";
 
-    private final String FILENAME = "file1.jpeg";
+    private final String ORIGINAL_FILENAME = "file1.jpeg";
+
+    private final String FILENAME = UUID.randomUUID().toString();
 
     private final String DESCRIPTION = "living room";
 
     private final InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
 
     MultipartFile file = new MockMultipartFile(FILENAME,  // name parameter (form field name)
-            FILENAME,             // original filename
+            ORIGINAL_FILENAME,             // original filename
             "image",            // content type
             "test date".getBytes()); // file content as byte[];
+    private MultipartFile MultipartFile;
 
     @BeforeEach
     @SneakyThrows
@@ -86,6 +89,7 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(fileEntity.get().getFirst().getId());
         assertEquals(id, fileEntity.get().getFirst().getObjectId());
         assertEquals(FILENAME, fileEntity.get().getFirst().getFileName());
+        assertEquals(ORIGINAL_FILENAME, fileEntity.get().getFirst().getOriginalFilename());
     }
 
     @Test

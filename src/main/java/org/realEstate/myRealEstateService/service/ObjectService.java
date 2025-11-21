@@ -33,8 +33,8 @@ public class ObjectService {
 
     private final File file;
 
-    private void saveFileInDB(UUID id, String description, String fileName, String originalFilename, String url) {
-        ObjectFilesEntity fileEntity = mapper.toEntity(id, description, fileName, originalFilename, url);
+    private void saveFileInDB(UUID id, ObjecFilesDto uploadInfo) {
+        ObjectFilesEntity fileEntity = mapper.toEntity(id, uploadInfo);
         repository.save(fileEntity);
     }
 
@@ -66,17 +66,17 @@ public class ObjectService {
     public void uploadImages(UUID id, ObjecFilesDto uploadInfo) throws CustomException {
         uploadChecks(id, uploadInfo);
 
-        String fileName = null;
         try {
-            fileName = this.file.getFilename(this.file.getFileExt(uploadInfo.getFile()));
+            uploadInfo.setFilename(this.file.getFilename(this.file.getFileExt(uploadInfo.getFile())));
+            uploadInfo.setUrl(URL);
             this.file.validateFile(uploadInfo.getFile());
             Files.createDirectories(Path.of(UPLOAD_DIR));
-            Path filePath = Paths.get(UPLOAD_DIR, fileName);
+            Path filePath = Paths.get(UPLOAD_DIR, uploadInfo.getFilename());
             InputStream inputstream = uploadInfo.getFile().getInputStream();
             this.file.copyFile(inputstream, filePath);
-            saveFileInDB(id, uploadInfo.getDescription(), fileName, uploadInfo.getFile().getOriginalFilename(), URL);
+            saveFileInDB(id, uploadInfo);
         } catch (Exception e) {
-            deleteFileFromDbAndFS(fileName);
+            deleteFileFromDbAndFS(uploadInfo.getFilename());
             throw new CustomException("Could not upload file: " + uploadInfo.getFile().getOriginalFilename() + " ,Error: " + e.getMessage());
         }
     }
