@@ -9,15 +9,29 @@ import java.util.UUID;
 @Component
 public class ObjectFileMapperImpl implements ObjectFileMapper {
     @Override
-    public ObjectFilesEntity toEntity(ObjecFilesDto uploadInfo) {
+    public ObjectFilesEntity toEntity(ObjecFilesDto objecFilesDto) {
         ObjectFilesEntity objectFilesEntity = new ObjectFilesEntity();
-        if (uploadInfo != null) {
-            objectFilesEntity.setObjectId(uploadInfo.getObjectId());
-            objectFilesEntity.setDescription(uploadInfo.getDescription());
-            objectFilesEntity.setFileName(uploadInfo.getFilename());
-            objectFilesEntity.setOriginalFilename(uploadInfo.getFile().getOriginalFilename());
-            objectFilesEntity.setUrl(uploadInfo.getUrl());
+        if (objecFilesDto != null) {
+            objectFilesEntity.setObjectId(objecFilesDto.getObjectId() != null ? objecFilesDto.getObjectId() : null);
+            objectFilesEntity.setDescription(objecFilesDto.getDescription() != null ? objecFilesDto.getDescription() : null);
+            objectFilesEntity.setFileName(objecFilesDto.getFilename() != null ? objecFilesDto.getFilename() : null);
+            objectFilesEntity.setOriginalFilename(objecFilesDto.getFile() != null && objecFilesDto.getFile().getOriginalFilename() != null ? objecFilesDto.getFile().getOriginalFilename() : null);
+            objectFilesEntity.setUrl(objecFilesDto.getUrl() != null ? objecFilesDto.getUrl() : null);
         }
         return objectFilesEntity;
+    }
+
+    @Override
+    public ObjecFilesDto toDto(ObjectFilesEntity objectFilesEntity) {
+        ObjecFilesDto objecFilesDto = new ObjecFilesDto();
+
+        if (objectFilesEntity != null) {
+            objecFilesDto.setObjectId(objectFilesEntity.getObjectId() != null ? objectFilesEntity.getObjectId() : null);
+            objecFilesDto.setFilename(objectFilesEntity.getFileName() != null ? objectFilesEntity.getFileName() : null);
+            objecFilesDto.setDescription(objectFilesEntity.getDescription() != null ? objectFilesEntity.getDescription() : null);
+            objecFilesDto.setUrl(objectFilesEntity.getUrl() != null ? objectFilesEntity.getUrl() : null);
+        }
+        return objecFilesDto;
+
     }
 }

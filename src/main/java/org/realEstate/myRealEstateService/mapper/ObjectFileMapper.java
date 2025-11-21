@@ -9,5 +9,7 @@ import java.util.UUID;
 
 @Component
 public interface ObjectFileMapper {
-    ObjectFilesEntity toEntity(ObjecFilesDto uploadInfo);
+    ObjectFilesEntity toEntity(ObjecFilesDto objecFilesDto);
+
+    ObjecFilesDto toDto(ObjectFilesEntity objectFilesEntity);
 }
