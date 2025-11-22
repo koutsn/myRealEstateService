@@ -77,7 +77,6 @@ class ObjectServiceIIntegrationTest {
     @Test
     @SneakyThrows
     void uploadImages_success() {
-        UUID id = UUID.randomUUID();
         filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
@@ -96,8 +95,7 @@ class ObjectServiceIIntegrationTest {
 
     @Test
     void uploadImages_no_objectId() {
-        UUID id = UUID.randomUUID();
-        filesDto.setObjectId(id);
+        filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
         Exception exception = assertThrows(
@@ -111,7 +109,6 @@ class ObjectServiceIIntegrationTest {
 
     @Test
     void uploadImages_files_is_null() {
-        UUID id = UUID.randomUUID();
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
@@ -124,8 +121,7 @@ class ObjectServiceIIntegrationTest {
     @Test
     @SneakyThrows
     void uploadImages_error_handling() {
-        UUID id = UUID.randomUUID();
-        filesDto.setObjectId(id);
+        filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
 

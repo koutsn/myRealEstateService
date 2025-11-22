@@ -50,8 +50,8 @@ public class ObjectService {
         }
     }
 
-    private void uploadChecks(UUID id, ObjecFilesDto file) throws CustomException {
-        if (id == null)
+    private void uploadChecks(UUID objId, ObjecFilesDto file) throws CustomException {
+        if (objId == null)
             throw new CustomException("Object id is null");
 
         if (file == null)
@@ -63,11 +63,11 @@ public class ObjectService {
 
     }
 
-    public void uploadImages(UUID id, ObjecFilesDto uploadInfo) throws CustomException {
-        uploadChecks(id, uploadInfo);
+    public void uploadImages(UUID objId, ObjecFilesDto uploadInfo) throws CustomException {
+        uploadChecks(objId, uploadInfo);
 
         try {
-            uploadInfo.setObjectId(id);
+            uploadInfo.setObjectId(objId);
             uploadInfo.setFilename(this.file.getFilename(this.file.getFileExt(uploadInfo.getFile())));
             uploadInfo.setUrl(URL);
             this.file.validateFile(uploadInfo.getFile());
@@ -81,4 +81,5 @@ public class ObjectService {
             throw new CustomException("Could not upload file: " + uploadInfo.getFile().getOriginalFilename() + " ,Error: " + e.getMessage());
         }
     }
+
 }
