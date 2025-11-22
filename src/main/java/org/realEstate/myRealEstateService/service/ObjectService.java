@@ -75,8 +75,9 @@ public class ObjectService {
 
         try {
             uploadInfo.setObjectId(objId);
-            uploadInfo.setFilename(this.file.getFilename(this.file.getFileExt(uploadInfo.getFile())));
-            uploadInfo.setUrl(URL);
+            String fileName = this.file.getFilename(this.file.getFileExt(uploadInfo.getFile()));
+            uploadInfo.setFilename(fileName);
+            uploadInfo.setUrl(URL + fileName);
             this.file.validateFile(uploadInfo.getFile());
             Files.createDirectories(Path.of(UPLOAD_DIR));
             Path filePath = Paths.get(UPLOAD_DIR, uploadInfo.getFilename());
