@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -50,6 +51,7 @@ class ObjectServiceIIntegrationTest {
     private final String UPLOAD_DIR = "images";
 
     private final String ORIGINAL_FILENAME = "file1.jpeg";
+    private final String ORIGINAL_FILENAME2 = "file2.jpeg";
 
     private final String FILENAME = UUID.randomUUID().toString();
 
@@ -60,7 +62,13 @@ class ObjectServiceIIntegrationTest {
     MultipartFile file = new MockMultipartFile(FILENAME,  // name parameter (form field name)
             ORIGINAL_FILENAME,             // original filename
             "image",            // content type
-            "test date".getBytes()); // file content as byte[];
+            "test data".getBytes()); // file content as byte[];
+
+    MultipartFile file2 = new MockMultipartFile(FILENAME,  // name parameter (form field name)
+            ORIGINAL_FILENAME2,             // original filename
+            "image",            // content type
+            "test data2".getBytes());
+
     private MultipartFile MultipartFile;
 
     @BeforeEach
@@ -81,7 +89,6 @@ class ObjectServiceIIntegrationTest {
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
 
-        // RUN
         objectService.uploadImages(objectId, filesDto);
 
         Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
@@ -127,12 +134,11 @@ class ObjectServiceIIntegrationTest {
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
         doReturn(FILENAME).when(fileMock).getFilename(anyString());
-        
+
         doThrow(new RuntimeException("Validation failed"))
                 .when(fileMock)
                 .validateFile(any(MultipartFile.class));
 
-        // RUN
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
@@ -145,5 +151,61 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(fileEntity);
         assertEquals(0, fileEntity.get().size());
 
+    }
+
+    @Test
+    @SneakyThrows
+    void getObjectImages() {
+        filesDto.setObjectId(objectId);
+        filesDto.setFile(file);
+        filesDto.setDescription("First file");
+        objectService.uploadImages(objectId, filesDto);
+
+        filesDto.setObjectId(objectId);
+        filesDto.setFile(file2);
+        filesDto.setDescription("Second File");
+        objectService.uploadImages(objectId, filesDto);
+
+        List<ObjecFilesDto> objectImages = objectService.getImagesForObject(objectId);
+
+        assertEquals(2, objectImages.size());
+        assertNotNull(objectImages.get(0).getId());
+        assertEquals(objectId, objectImages.get(0).getObjectId());
+        assertNull(objectImages.get(0).getFile());
+        assertEquals("http://localhost;8080/images/", objectImages.get(0).getUrl());
+        assertEquals("First file", objectImages.get(0).getDescription());
+        assertNotNull(objectImages.get(0).getFilename());
+        assertEquals("file1.jpeg", objectImages.get(0).getOriginalFilename());
+
+        assertNotNull(objectImages.get(1).getId());
+        assertEquals(objectId, objectImages.get(1).getObjectId());
+        assertNull(objectImages.get(1).getFile());
+        assertEquals("http://localhost;8080/images/", objectImages.get(1).getUrl());
+        assertEquals("Second File", objectImages.get(1).getDescription());
+        assertNotNull(objectImages.get(1).getFilename());
+        assertEquals("file2.jpeg", objectImages.get(1).getOriginalFilename());
+    }
+
+    @Test
+    @SneakyThrows
+    void getImage() {
+        filesDto.setObjectId(objectId);
+        filesDto.setFile(file);
+        filesDto.setDescription("First file");
+        objectService.uploadImages(objectId, filesDto);
+
+        List<ObjecFilesDto> objectImages = objectService.getImagesForObject(objectId);
+        assertEquals(1, objectImages.size());
+
+        ObjecFilesDto image = objectService.getImageById(objectImages.getFirst().getId());
+
+        assertNotNull(image);
+        assertNotNull(image.getId());
+        assertEquals(objectId, image.getObjectId());
+        assertNull(image.getFile());
+        assertEquals("http://localhost;8080/images/", image.getUrl());
+        assertEquals("First file", image.getDescription());
+        assertNotNull(image.getFilename());
+        assertEquals("file1.jpeg", image.getOriginalFilename());
     }
 }

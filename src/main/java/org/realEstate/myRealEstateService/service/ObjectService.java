@@ -15,7 +15,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,4 +85,17 @@ public class ObjectService {
         }
     }
 
+    public List<ObjecFilesDto> getImagesForObject(UUID objId) {
+        List<ObjecFilesDto> imagesDto = new ArrayList<>();
+        List<ObjectFilesEntity> images = repository.findByObjectId(objId).orElse(null);
+        if (images != null) {
+            imagesDto = images.stream().map(mapper::toDto).collect(Collectors.toList());
+        }
+        return imagesDto;
+    }
+
+    public ObjecFilesDto getImageById(UUID imgID) {
+        ObjectFilesEntity image = repository.findById(imgID).orElse(null);
+       return mapper.toDto(image);
+    }
 }
