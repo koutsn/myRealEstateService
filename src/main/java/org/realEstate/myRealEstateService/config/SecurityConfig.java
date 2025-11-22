@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,13 +29,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         String loginPath = "/" + appName + "/login";
+        String imagesPath = "/" + appName + "/images";
+        String imagePath = "/" + appName + "/image/**";
 
         http
                 .csrf(csrf -> csrf.disable()) // 👈 IMPORTANT
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(loginPath).permitAll()
-                                .requestMatchers("/images/readme.txt").denyAll()
+                                .requestMatchers(HttpMethod.GET, imagesPath).permitAll()
+                                .requestMatchers(HttpMethod.GET, imagePath).permitAll()
                                 .requestMatchers("/images/**").permitAll()
+                                .requestMatchers("/images/readme.txt").denyAll()
                                 .anyRequest().authenticated()
                         //.anyRequest().permitAll()
                 )

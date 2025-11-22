@@ -37,10 +37,7 @@ public class ObjectController {
         }
     }
 
-    @GetMapping(
-            value = "/object/{id}/images",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @GetMapping("/object/{id}/images")
     public ResponseEntity<?> getObjectImages(@PathVariable UUID id) {
         try {
             List<ObjecFilesDto> objectImages = objectService.getImagesForObject(id);
@@ -53,10 +50,7 @@ public class ObjectController {
         }
     }
 
-    @GetMapping(
-            value = "/image/{id}",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @GetMapping("/image/{id}")
     public ResponseEntity<?> getImage(@PathVariable UUID id) {
         try {
             ObjecFilesDto objectImage = objectService.getImageById(id);
