@@ -16,7 +16,9 @@ public class ObjectFileMapperImpl implements ObjectFileMapper {
             objectFilesEntity.setDescription(objecFilesDto.getDescription() != null ? objecFilesDto.getDescription() : null);
             objectFilesEntity.setFileName(objecFilesDto.getFilename() != null ? objecFilesDto.getFilename() : null);
             objectFilesEntity.setOriginalFilename(objecFilesDto.getFile() != null && objecFilesDto.getFile().getOriginalFilename() != null ? objecFilesDto.getFile().getOriginalFilename() : null);
-            objectFilesEntity.setUrl(objecFilesDto.getUrl() != null ? objecFilesDto.getUrl() : null);
+            if (objecFilesDto.getUrl() != null && objecFilesDto.getFilename() != null) {
+                objectFilesEntity.setUrl(objecFilesDto.getUrl() + objecFilesDto.getFilename());
+            }
         }
         return objectFilesEntity;
     }
