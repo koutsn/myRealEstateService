@@ -1,5 +1,6 @@
 package org.realEstate.myRealEstateService.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
 import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
@@ -10,6 +11,7 @@ import org.realEstate.myRealEstateService.utils.File;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.beans.Transient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -36,11 +38,13 @@ public class ObjectService {
 
     private final File file;
 
+    @Transactional
     private void saveFileInDB(ObjecFilesDto uploadInfo) {
         ObjectFilesEntity fileEntity = mapper.toEntity(uploadInfo);
         repository.save(fileEntity);
     }
 
+    @Transactional
     private void deleteFileFromDbAndFS(String fileName) {
         try {
             if (fileName != null) {
