@@ -29,19 +29,18 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         String loginPath = "/" + appName + "/login";
-        String imagesPath = "/" + appName + "/images";
-        String imagePath = "/" + appName + "/image/**";
+        String imagesPath = "/" + appName + "/object/*/images";  // Matches /object/{id}/images
+        String imagePath = "/" + appName + "/image/**";  // Matches /image/**
 
         http
-                .csrf(csrf -> csrf.disable()) // 👈 IMPORTANT
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(loginPath).permitAll()
-                                .requestMatchers(HttpMethod.GET, imagesPath).permitAll()
-                                .requestMatchers(HttpMethod.GET, imagePath).permitAll()
-                                .requestMatchers("/images/**").permitAll()
-                                .requestMatchers("/images/readme.txt").denyAll()
-                                .anyRequest().authenticated()
-                        //.anyRequest().permitAll()
+                        .requestMatchers(loginPath).permitAll()
+                        .requestMatchers(HttpMethod.GET, imagesPath).permitAll()
+                        .requestMatchers(HttpMethod.GET, imagePath).permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/images/readme.txt").denyAll()
+                        .anyRequest().authenticated()  // Require authentication for all other requests
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
