@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,10 +51,10 @@ class ObjectServiceIIntegrationTest {
 
     private final String UPLOAD_DIR = "images";
 
-    private final String ORIGINAL_FILENAME = "file1.jpeg";
-    private final String ORIGINAL_FILENAME2 = "file2.jpeg";
+    private final String ORIGINAL_FILENAME = "file1.jpeg";    private final String ORIGINAL_FILENAME2 = "file2.jpeg";
 
-    private final String FILENAME = UUID.randomUUID().toString();
+
+    private final String FILENAME = UUID.randomUUID().toString() + ".jpg";
 
     private final String DESCRIPTION = "living room";
 
@@ -172,7 +173,7 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(objectImages.get(0).getId());
         assertEquals(objectId, objectImages.get(0).getObjectId());
         assertNull(objectImages.get(0).getFile());
-        assertEquals("http://localhost;8080/images/", objectImages.get(0).getUrl());
+        assertThat(objectImages.get(0).getUrl()).matches("http://localhost:8080/images/\\S+\\.(jpg|jpeg|png|gif|bmp|svg|webp|tiff)");
         assertEquals("First file", objectImages.get(0).getDescription());
         assertNotNull(objectImages.get(0).getFilename());
         assertEquals("file1.jpeg", objectImages.get(0).getOriginalFilename());
@@ -180,7 +181,7 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(objectImages.get(1).getId());
         assertEquals(objectId, objectImages.get(1).getObjectId());
         assertNull(objectImages.get(1).getFile());
-        assertEquals("http://localhost;8080/images/", objectImages.get(1).getUrl());
+        assertThat(objectImages.get(1).getUrl()).matches("http://localhost:8080/images/\\S+\\.(jpg|jpeg|png|gif|bmp|svg|webp|tiff)");
         assertEquals("Second File", objectImages.get(1).getDescription());
         assertNotNull(objectImages.get(1).getFilename());
         assertEquals("file2.jpeg", objectImages.get(1).getOriginalFilename());
@@ -203,7 +204,7 @@ class ObjectServiceIIntegrationTest {
         assertNotNull(image.getId());
         assertEquals(objectId, image.getObjectId());
         assertNull(image.getFile());
-        assertEquals("http://localhost;8080/images/", image.getUrl());
+        assertThat(image.getUrl()).matches("http://localhost:8080/images/\\S+\\.(jpg|jpeg|png|gif|bmp|svg|webp|tiff)");
         assertEquals("First file", image.getDescription());
         assertNotNull(image.getFilename());
         assertEquals("file1.jpeg", image.getOriginalFilename());
