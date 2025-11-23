@@ -1,5 +1,6 @@
 package org.realEstate.myRealEstateService.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
@@ -38,6 +39,7 @@ public class ObjectController {
     }
 
     @GetMapping("/object/{id}/images")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getObjectImages(@PathVariable UUID id) {
         try {
             List<ObjecFilesDto> objectImages = objectService.getImagesForObject(id);
@@ -51,6 +53,7 @@ public class ObjectController {
     }
 
     @GetMapping("/image/{id}")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getImage(@PathVariable UUID id) {
         try {
             ObjecFilesDto objectImage = objectService.getImageById(id);
