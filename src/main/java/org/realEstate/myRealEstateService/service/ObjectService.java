@@ -41,7 +41,7 @@ public class ObjectService {
     @Transactional
     private void saveFileInDB(ObjecFilesDto uploadInfo) {
         ObjectFilesEntity fileEntity = mapper.toEntity(uploadInfo);
-        repository.save(fileEntity);
+        repository.saveAndFlush(fileEntity);
     }
 
     @Transactional
@@ -70,6 +70,7 @@ public class ObjectService {
 
     }
 
+    @Transactional
     public void uploadImages(UUID objId, ObjecFilesDto uploadInfo) throws CustomException {
         uploadChecks(objId, uploadInfo);
 
