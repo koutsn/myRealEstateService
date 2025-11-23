@@ -1,13 +1,11 @@
 package org.realEstate.myRealEstateService.dto;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -15,18 +13,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ObjecFilesDto {
+public class AddressDto {
     @Id
     @NotNull
-    private UUID Id;
+    private UUID id;
     @NotNull
-    private UUID objectId;
+    private String street;
     @NotNull
-    private String filename;
+    private String zipCode;
     @NotNull
-    private String originalFilename;
-    private String description;
-    private MultipartFile file;
+    private String city;
     @NotNull
-    private String url;
+    private String country;
+
 }
