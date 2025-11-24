@@ -40,7 +40,7 @@ class ObjectServiceTest {
         OffsetDateTime creationDate = OffsetDateTime.now();
 
         AddressDto addressDto = new AddressDto();
-        addressDto.setStreet("street");
+        addressDto.setStreet("street 2A");
         addressDto.setZipCode("1234");
         addressDto.setCity("city");
         addressDto.setCountry("country");
@@ -70,7 +70,11 @@ class ObjectServiceTest {
         assertEquals(3, properties.getFirst().getNumberRooms());
         assertEquals(1, properties.getFirst().getNumberBathrooms());
 
-
+        assertNotNull(properties.getFirst().getAddress().getId());
+        assertEquals("street 2A", properties.getFirst().getAddress().getStreet());
+        assertEquals("1234", properties.getFirst().getAddress().getZipCode());
+        assertEquals("city", properties.getFirst().getAddress().getCity());
+        assertEquals("country", properties.getFirst().getAddress().getCountry());
     }
 
 }
