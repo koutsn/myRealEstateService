@@ -11,7 +11,6 @@ import org.realEstate.myRealEstateService.utils.File;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ObjectService {
+public class ObjectFileService {
 
     @Value("${image.path}")
     private String UPLOAD_DIR;
@@ -32,16 +31,16 @@ public class ObjectService {
     @Value("${image.url}")
     private String URL;
 
-    private final ObjectFileMapper mapper;
+    private final ObjectFileMapper objectFileMapper;
 
-    private final ObjectFilesRepository repository;
+    private final ObjectFilesRepository objectFilesRepository;
 
     private final File file;
 
     @Transactional
     private void saveFileInDB(ObjecFilesDto uploadInfo) {
-        ObjectFilesEntity fileEntity = mapper.toEntity(uploadInfo);
-        repository.saveAndFlush(fileEntity);
+        ObjectFilesEntity fileEntity = objectFileMapper.toEntity(uploadInfo);
+        objectFilesRepository.saveAndFlush(fileEntity);
     }
 
     @Transactional
@@ -49,7 +48,7 @@ public class ObjectService {
         try {
             if (fileName != null) {
                 file.deleteFile(Paths.get(UPLOAD_DIR, fileName));
-                repository.findByFileName(fileName).ifPresent(repository::delete);
+                objectFilesRepository.findByFileName(fileName).ifPresent(objectFilesRepository::delete);
             }
         } catch (IOException e) {
             System.err.println("Could not erase the file data.Error: " + e.getMessage());
@@ -93,15 +92,15 @@ public class ObjectService {
 
     public List<ObjecFilesDto> getImagesForObject(UUID objId) {
         List<ObjecFilesDto> imagesDto = new ArrayList<>();
-        List<ObjectFilesEntity> images = repository.findByObjectId(objId).orElse(null);
+        List<ObjectFilesEntity> images = objectFilesRepository.findByObjectId(objId).orElse(null);
         if (images != null) {
-            imagesDto = images.stream().map(mapper::toDto).collect(Collectors.toList());
+            imagesDto = images.stream().map(objectFileMapper::toDto).collect(Collectors.toList());
         }
         return imagesDto;
     }
 
     public ObjecFilesDto getImageById(UUID imgID) {
-        ObjectFilesEntity image = repository.findById(imgID).orElse(null);
-       return mapper.toDto(image);
+        ObjectFilesEntity image = objectFilesRepository.findById(imgID).orElse(null);
+        return objectFileMapper.toDto(image);
     }
 }

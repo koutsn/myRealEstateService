@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
-import org.realEstate.myRealEstateService.service.ObjectService;
+import org.realEstate.myRealEstateService.service.ObjectFileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping("${spring.application.name}")
 public class ObjectController {
 
-    private final ObjectService objectService;
+    private final ObjectFileService objectFileService;
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping(
@@ -28,7 +28,7 @@ public class ObjectController {
     )
     public ResponseEntity<?> createImage(@PathVariable UUID id, @ModelAttribute ObjecFilesDto file) {
         try {
-            objectService.uploadImages(id, file);
+            objectFileService.uploadImages(id, file);
             return ResponseEntity.created(null).build();
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
@@ -42,7 +42,7 @@ public class ObjectController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getObjectImages(@PathVariable UUID id) {
         try {
-            List<ObjecFilesDto> objectImages = objectService.getImagesForObject(id);
+            List<ObjecFilesDto> objectImages = objectFileService.getImagesForObject(id);
             return ResponseEntity.ok(objectImages);
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
@@ -56,7 +56,7 @@ public class ObjectController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getImage(@PathVariable UUID id) {
         try {
-            ObjecFilesDto objectImage = objectService.getImageById(id);
+            ObjecFilesDto objectImage = objectFileService.getImageById(id);
             return ResponseEntity.ok(objectImage);
         } catch (Exception e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());

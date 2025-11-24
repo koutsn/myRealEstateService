@@ -3,7 +3,6 @@ package org.realEstate.myRealEstateService.service;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
 import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
@@ -19,13 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,9 +31,9 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class ObjectServiceIIntegrationTest {
+class ObjectFileServiceIIntegrationTest {
     @Autowired
-    ObjectService objectService;
+    ObjectFileService objectFileService;
 
     @Autowired
     private ObjectFilesRepository repository;
@@ -90,7 +86,7 @@ class ObjectServiceIIntegrationTest {
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
 
-        objectService.uploadImages(objectId, filesDto);
+        objectFileService.uploadImages(objectId, filesDto);
 
         Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
         assertNotNull(fileEntity);
@@ -109,7 +105,7 @@ class ObjectServiceIIntegrationTest {
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
-                    objectService.uploadImages(null, filesDto);
+                    objectFileService.uploadImages(null, filesDto);
                 }
         );
         assertEquals("Object id is null", exception.getMessage());
@@ -120,7 +116,7 @@ class ObjectServiceIIntegrationTest {
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
-                    objectService.uploadImages(objectId, null);
+                    objectFileService.uploadImages(objectId, null);
                 }
         );
         assertEquals("Files object is null", exception.getMessage());
@@ -143,7 +139,7 @@ class ObjectServiceIIntegrationTest {
         Exception exception = assertThrows(
                 CustomException.class,
                 () -> {
-                    objectService.uploadImages(objectId, filesDto);
+                    objectFileService.uploadImages(objectId, filesDto);
                 }
         );
         assertEquals("Could not upload file: " + ORIGINAL_FILENAME + " ,Error: Validation failed", exception.getMessage());
@@ -160,14 +156,14 @@ class ObjectServiceIIntegrationTest {
         filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription("First file");
-        objectService.uploadImages(objectId, filesDto);
+        objectFileService.uploadImages(objectId, filesDto);
 
         filesDto.setObjectId(objectId);
         filesDto.setFile(file2);
         filesDto.setDescription("Second File");
-        objectService.uploadImages(objectId, filesDto);
+        objectFileService.uploadImages(objectId, filesDto);
 
-        List<ObjecFilesDto> objectImages = objectService.getImagesForObject(objectId);
+        List<ObjecFilesDto> objectImages = objectFileService.getImagesForObject(objectId);
 
         assertEquals(2, objectImages.size());
         assertNotNull(objectImages.get(0).getId());
@@ -193,12 +189,12 @@ class ObjectServiceIIntegrationTest {
         filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription("First file");
-        objectService.uploadImages(objectId, filesDto);
+        objectFileService.uploadImages(objectId, filesDto);
 
-        List<ObjecFilesDto> objectImages = objectService.getImagesForObject(objectId);
+        List<ObjecFilesDto> objectImages = objectFileService.getImagesForObject(objectId);
         assertEquals(1, objectImages.size());
 
-        ObjecFilesDto image = objectService.getImageById(objectImages.getFirst().getId());
+        ObjecFilesDto image = objectFileService.getImageById(objectImages.getFirst().getId());
 
         assertNotNull(image);
         assertNotNull(image.getId());

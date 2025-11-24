@@ -30,7 +30,7 @@ public class ObjectDto {
     private int numberRooms;
     @NotNull
     private int numberBathrooms;
-    @NotNull
+    private boolean hasGarage;
     private int garageSize;
     @NotNull
     private ObjectStatus status;
@@ -38,7 +38,6 @@ public class ObjectDto {
     private OffsetDateTime createdAt;
     @NotNull
     private OffsetDateTime updatedAt;
-    @NotNull
-    private String thumbnail;
+    private String thumbnailUrl;
 
 }
