@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.realEstate.myRealEstateService.Enum.ObjectStatus;
@@ -33,7 +34,7 @@ public class ObjectEntity {
     private String description;
 
     @NotNull
-    @OneToOne
+    @ManyToOne(cascade  = CascadeType.ALL)
     @JoinColumn(
             name = "address_id",
             referencedColumnName = "id",
