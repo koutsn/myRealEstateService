@@ -47,12 +47,12 @@ class ObjectFileServiceIIntegrationTest {
 
     private final String UPLOAD_DIR = "images";
 
-    private String filename = UUID.randomUUID().toString() + ".jpg";
+    private String filename;
 
     private final String ORIGINAL_FILENAME1 = "file1.jpeg";
     private final String ORIGINAL_FILENAME2 = "filew.jpeg";
 
-    private final String DESCRIPTION = "living room";
+    private final String DESCRIPTION = "Test descrition";
 
     private final InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
 
