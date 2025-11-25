@@ -65,4 +65,20 @@ public class ObjectFileController {
                     .body(response);
         }
     }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @DeleteMapping(
+            value = "/image/|{id}"
+    )
+    public ResponseEntity<?> deleteImageById(@PathVariable UUID id) {
+        try {
+            objectFileService.deleteImageById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(response);
+        }
+    }
 }

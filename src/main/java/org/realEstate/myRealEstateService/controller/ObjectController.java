@@ -1,11 +1,12 @@
 package org.realEstate.myRealEstateService.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjectDto;
 import org.realEstate.myRealEstateService.response.ErrorResponse;
 import org.realEstate.myRealEstateService.service.ObjectService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class ObjectController {
     @PostMapping(
             value = "/object"
     )
-    public ResponseEntity<?> createObject(@ModelAttribute ObjectDto object) {
+    public ResponseEntity<?> createObject(@Valid @ModelAttribute ObjectDto object) {
         try {
             objectService.createObject(object);
             return ResponseEntity.created(null).build();
@@ -38,6 +39,7 @@ public class ObjectController {
     @GetMapping(
             value = "/objects"
     )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getAllObjects() {
         try {
             List<ObjectDto> objects = objectService.getAllObjects();
@@ -53,6 +55,7 @@ public class ObjectController {
     @GetMapping(
             value = "/object/|{id}"
     )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> getAllObjects(@PathVariable UUID id) {
         try {
             ObjectDto objects = objectService.getObjectById(id);
@@ -65,6 +68,7 @@ public class ObjectController {
         }
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping(
             value = "/object/|{id}"
     )

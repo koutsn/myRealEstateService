@@ -1,5 +1,6 @@
 package org.realEstate.myRealEstateService.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.myRealEstate.model.LoginUser200Response;
@@ -62,6 +63,7 @@ public class UserController {
 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
@@ -69,6 +71,7 @@ public class UserController {
 
     @GetMapping("/user/{username}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public ResponseEntity<?> registerUser(@PathVariable String username) {
         try {
             UserDto user = userService.getUserByUsername(username);

@@ -35,6 +35,8 @@ public class ObjectFileService {
 
     private final ObjectFilesRepository objectFilesRepository;
 
+    //private final ObjectService objectService;
+
     private final File file;
 
     @Transactional
