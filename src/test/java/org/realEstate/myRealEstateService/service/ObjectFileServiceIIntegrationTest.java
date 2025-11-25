@@ -47,21 +47,21 @@ class ObjectFileServiceIIntegrationTest {
 
     private final String UPLOAD_DIR = "images";
 
-    private final String ORIGINAL_FILENAME = "file1.jpeg";    private final String ORIGINAL_FILENAME2 = "file2.jpeg";
+    private String filename = UUID.randomUUID().toString() + ".jpg";
 
-
-    private final String FILENAME = UUID.randomUUID().toString() + ".jpg";
+    private final String ORIGINAL_FILENAME1 = "file1.jpeg";
+    private final String ORIGINAL_FILENAME2 = "filew.jpeg";
 
     private final String DESCRIPTION = "living room";
 
     private final InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
 
-    MultipartFile file = new MockMultipartFile(FILENAME,  // name parameter (form field name)
-            ORIGINAL_FILENAME,             // original filename
+    MultipartFile file = new MockMultipartFile("filename1-jpg",  // name parameter (form field name)
+            ORIGINAL_FILENAME1,             // original filename
             "image",            // content type
-            "test data".getBytes()); // file content as byte[];
+            "test data2".getBytes());
 
-    MultipartFile file2 = new MockMultipartFile(FILENAME,  // name parameter (form field name)
+    MultipartFile file2 = new MockMultipartFile("filename2-jpg",  // name parameter (form field name)
             ORIGINAL_FILENAME2,             // original filename
             "image",            // content type
             "test data2".getBytes());
@@ -71,30 +71,36 @@ class ObjectFileServiceIIntegrationTest {
     @BeforeEach
     @SneakyThrows
     void Setup() {
+        filename = UUID.randomUUID().toString() + ".jpg";
         doReturn("jpeg").when(fileMock).getFileExt(any());
-        doReturn(FILENAME).when(fileMock).getFilename(anyString());
+        doReturn(filename).when(fileMock).getFilename(anyString());
         doNothing().when(fileMock).validateFile(any(MultipartFile.class));
         doNothing().when(fileMock).createDir(anyString());
         doNothing().when(fileMock).copyFile(any(), any());
         doNothing().when(fileMock).deleteFile(any());
     }
 
-    @Test
     @SneakyThrows
-    void uploadImages_success() {
+    public void uploadFile(UUID objectId) {
         filesDto.setObjectId(objectId);
         filesDto.setFile(file);
         filesDto.setDescription(DESCRIPTION);
-
         objectFileService.uploadImages(objectId, filesDto);
+    }
+
+    @Test
+    @SneakyThrows
+    void uploadImages_success() {
+
+        uploadFile(objectId);
 
         Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
         assertNotNull(fileEntity);
         assertEquals(1, fileEntity.get().size());
         assertNotNull(fileEntity.get().getFirst().getId());
         assertEquals(objectId, fileEntity.get().getFirst().getObjectId());
-        assertEquals(FILENAME, fileEntity.get().getFirst().getFileName());
-        assertEquals(ORIGINAL_FILENAME, fileEntity.get().getFirst().getOriginalFilename());
+        assertEquals(filename, fileEntity.get().getFirst().getFileName());
+        assertEquals(ORIGINAL_FILENAME1, fileEntity.get().getFirst().getOriginalFilename());
     }
 
     @Test
@@ -130,7 +136,7 @@ class ObjectFileServiceIIntegrationTest {
         filesDto.setDescription(DESCRIPTION);
 
         InputStream stream1 = new ByteArrayInputStream("testFile".getBytes());
-        doReturn(FILENAME).when(fileMock).getFilename(anyString());
+        //doReturn(filename).when(fileMock).getFilename(anyString());
 
         doThrow(new RuntimeException("Validation failed"))
                 .when(fileMock)
@@ -142,7 +148,7 @@ class ObjectFileServiceIIntegrationTest {
                     objectFileService.uploadImages(objectId, filesDto);
                 }
         );
-        assertEquals("Could not upload file: " + ORIGINAL_FILENAME + " ,Error: Validation failed", exception.getMessage());
+        assertEquals("Could not upload file: " + ORIGINAL_FILENAME1 + " ,Error: Validation failed", exception.getMessage());
 
         Optional<List<ObjectFilesEntity>> fileEntity = repository.findByObjectId(objectId);
         assertNotNull(fileEntity);
@@ -172,7 +178,7 @@ class ObjectFileServiceIIntegrationTest {
         assertThat(objectImages.get(0).getUrl()).matches("http://localhost:8080/images/\\S+\\.(jpg|jpeg|png|gif|bmp|svg|webp|tiff)");
         assertEquals("First file", objectImages.get(0).getDescription());
         assertNotNull(objectImages.get(0).getFilename());
-        assertEquals("file1.jpeg", objectImages.get(0).getOriginalFilename());
+        assertEquals(ORIGINAL_FILENAME1, objectImages.get(0).getOriginalFilename());
 
         assertNotNull(objectImages.get(1).getId());
         assertEquals(objectId, objectImages.get(1).getObjectId());
@@ -180,7 +186,7 @@ class ObjectFileServiceIIntegrationTest {
         assertThat(objectImages.get(1).getUrl()).matches("http://localhost:8080/images/\\S+\\.(jpg|jpeg|png|gif|bmp|svg|webp|tiff)");
         assertEquals("Second File", objectImages.get(1).getDescription());
         assertNotNull(objectImages.get(1).getFilename());
-        assertEquals("file2.jpeg", objectImages.get(1).getOriginalFilename());
+        assertEquals(ORIGINAL_FILENAME2, objectImages.get(1).getOriginalFilename());
     }
 
     @Test
@@ -204,5 +210,40 @@ class ObjectFileServiceIIntegrationTest {
         assertEquals("First file", image.getDescription());
         assertNotNull(image.getFilename());
         assertEquals("file1.jpeg", image.getOriginalFilename());
+    }
+
+    @Test
+    void deleteImageById() {
+
+        uploadFile(objectId);
+        List<ObjecFilesDto> files = objectFileService.getImagesForObject(objectId);
+
+        assertEquals(1, files.size());
+        assertNotNull(files.getFirst().getId());
+
+        objectFileService.deleteImageById(files.getFirst().getId());
+        List<ObjecFilesDto> filesAfterDelete = objectFileService.getImagesForObject(objectId);
+        assertEquals(0, filesAfterDelete.size());
+    }
+
+    @Test
+    void deleteImageByObjectId() {
+
+        String filename = UUID.randomUUID().toString() + ".jpg";
+        doReturn(filename).when(fileMock).getFilename(anyString());
+        uploadFile(objectId);
+
+        String filename2 = UUID.randomUUID().toString() + ".jpg";
+        doReturn(filename2).when(fileMock).getFilename(anyString());
+        uploadFile(objectId);
+
+        List<ObjecFilesDto> files = objectFileService.getImagesForObject(objectId);
+
+        assertEquals(2, files.size());
+        assertNotNull(files.getFirst().getId());
+
+        objectFileService.deleteImageByObjectId(objectId);
+        List<ObjecFilesDto> filesAfterDelete = objectFileService.getImagesForObject(objectId);
+        assertEquals(0, filesAfterDelete.size());
     }
 }

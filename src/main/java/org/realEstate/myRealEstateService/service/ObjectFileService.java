@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -102,5 +103,19 @@ public class ObjectFileService {
     public ObjecFilesDto getImageById(UUID imgID) {
         ObjectFilesEntity image = objectFilesRepository.findById(imgID).orElse(null);
         return objectFileMapper.toDto(image);
+    }
+
+    public void deleteImageById(UUID id) {
+        ObjecFilesDto image = getImageById(id);
+        if (image != null) {
+            deleteFileFromDbAndFS(image.getFilename());
+        }
+    }
+
+    public void deleteImageByObjectId(UUID objId) {
+        List<ObjectFilesEntity> images = objectFilesRepository.findByObjectId(objId).orElse(null);
+        if (images != null && !images.isEmpty()) {
+            images.forEach(image -> deleteFileFromDbAndFS(image.getFileName()));
+        }
     }
 }
