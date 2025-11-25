@@ -1,5 +1,6 @@
 package org.realEstate.myRealEstateService.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class ObjecFilesDto {
     @Id
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID Id;
     @NotNull
     private UUID objectId;
