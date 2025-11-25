@@ -3,7 +3,10 @@ package org.realEstate.myRealEstateService.service;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.realEstate.myRealEstateService.dto.AddressDto;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
+import org.realEstate.myRealEstateService.dto.ObjectDto;
+import org.realEstate.myRealEstateService.entity.ObjectEntity;
 import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.repository.ObjectFilesRepository;
@@ -20,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +40,9 @@ class ObjectFileServiceIIntegrationTest {
     ObjectFileService objectFileService;
 
     @Autowired
+    ObjectService objectService;
+
+    @Autowired
     private ObjectFilesRepository repository;
 
     @MockitoBean
@@ -43,7 +50,7 @@ class ObjectFileServiceIIntegrationTest {
 
     private final ObjecFilesDto filesDto = new ObjecFilesDto();
 
-    private final UUID objectId = UUID.randomUUID();
+    private UUID objectId;
 
     private final String UPLOAD_DIR = "images";
 
@@ -68,9 +75,12 @@ class ObjectFileServiceIIntegrationTest {
 
     private MultipartFile MultipartFile;
 
+    private ObjectDto objectDto;
+
     @BeforeEach
     @SneakyThrows
     void Setup() {
+        repository.deleteAll();
         filename = UUID.randomUUID().toString() + ".jpg";
         doReturn("jpeg").when(fileMock).getFileExt(any());
         doReturn(filename).when(fileMock).getFilename(anyString());
@@ -78,6 +88,13 @@ class ObjectFileServiceIIntegrationTest {
         doNothing().when(fileMock).createDir(anyString());
         doNothing().when(fileMock).copyFile(any(), any());
         doNothing().when(fileMock).deleteFile(any());
+
+        ObjectDto objectDto = new ObjectDto();
+        AddressDto addressDto = new AddressDto();
+        objectDto.setAddress(addressDto);
+        objectService.createObject(objectDto);
+        List<ObjectDto> objects = objectService.getAllObjects();
+        objectId = objects.getFirst().getId();
     }
 
     @SneakyThrows
@@ -104,6 +121,20 @@ class ObjectFileServiceIIntegrationTest {
     }
 
     @Test
+    void uploadImages_invalid_objectId() {
+        UUID objectId = UUID.randomUUID();
+        filesDto.setFile(file);
+        filesDto.setDescription(DESCRIPTION);
+        Exception exception = assertThrows(
+                CustomException.class,
+                () -> {
+                    objectFileService.uploadImages(objectId, filesDto);
+                }
+        );
+        assertEquals("Invalid object id " + objectId + " for image file1.jpeg", exception.getMessage());
+    }
+
+    @Test
     void uploadImages_no_objectId() {
         filesDto.setObjectId(objectId);
         filesDto.setFile(file);
@@ -115,6 +146,19 @@ class ObjectFileServiceIIntegrationTest {
                 }
         );
         assertEquals("Object id is null", exception.getMessage());
+    }
+
+    @Test
+    void uploadImages_no_descrription() {
+        filesDto.setObjectId(objectId);
+        filesDto.setFile(file);
+        Exception exception = assertThrows(
+                CustomException.class,
+                () -> {
+                    objectFileService.uploadImages(objectId, filesDto);
+                }
+        );
+        assertEquals("No file description", exception.getMessage());
     }
 
     @Test

@@ -3,10 +3,12 @@ package org.realEstate.myRealEstateService.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.realEstate.myRealEstateService.dto.ObjecFilesDto;
+import org.realEstate.myRealEstateService.entity.ObjectEntity;
 import org.realEstate.myRealEstateService.entity.ObjectFilesEntity;
 import org.realEstate.myRealEstateService.exception.CustomException;
 import org.realEstate.myRealEstateService.mapper.ObjectFileMapper;
 import org.realEstate.myRealEstateService.repository.ObjectFilesRepository;
+import org.realEstate.myRealEstateService.repository.ObjectRepository;
 import org.realEstate.myRealEstateService.utils.File;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,7 @@ public class ObjectFileService {
 
     private final ObjectFilesRepository objectFilesRepository;
 
-    //private final ObjectService objectService;
+    private final ObjectRepository objectRepository;
 
     private final File file;
 
@@ -58,17 +60,21 @@ public class ObjectFileService {
         }
     }
 
-    private void uploadChecks(UUID objId, ObjecFilesDto file) throws CustomException {
+    private void uploadChecks(UUID objId, ObjecFilesDto uploadInfo) throws CustomException {
         if (objId == null)
             throw new CustomException("Object id is null");
 
-        if (file == null)
+        if (uploadInfo == null)
             throw new CustomException("Files object is null");
 
 
-        if (file.getDescription() == null)
-            throw new CustomException("No file description is given in names");
+        if (uploadInfo.getDescription() == null)
+            throw new CustomException("No file description");
 
+        ObjectEntity object = objectRepository.findById(objId).orElse(null);
+        if (object == null) {
+            throw new CustomException("Invalid object id " + objId + " for image " + uploadInfo.getFile().getOriginalFilename());
+        }
     }
 
     @Transactional
