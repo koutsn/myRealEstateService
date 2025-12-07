@@ -1,0 +1,38 @@
+image: maven:3.9.6-eclipse-temurin-17
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  APP_NAME: springboot-rest-service
+
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+  - build
+  - test
+  - package
+
+build:
+  stage: build
+  script:
+    - mvn -B clean compile
+  artifacts:
+    paths:
+      - target/
+
+test:
+  stage: test
+  script:
+    - mvn -B test
+  artifacts:
+    reports:
+      junit: target/surefire-reports/*.xml
+
+package:
+  stage: package
+  script:
+    - mvn -B package
+  artifacts:
+    paths:
+      - target/*.jar

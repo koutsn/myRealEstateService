@@ -132,4 +132,12 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>gitlab-maven</id>
+            <name>GitLab Maven Registry</name>
+            <url>http://localhost:8929/api/v4/projects/3/packages/maven</url>
+        </repository>
+    </distributionManagement>
+
 </project>

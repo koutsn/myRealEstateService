@@ -1,0 +1,1 @@
+settings.xml = C:\Users\<user>\.m2
