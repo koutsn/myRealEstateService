@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <gitlab.projectId>4</gitlab.projectId>
     </properties>
     <dependencies>
         <dependency>
@@ -136,8 +137,7 @@
         <repository>
             <id>gitlab-maven</id>
             <name>GitLab Maven Registry</name>
-            <url>http://localhost:8929/api/v4/projects/3/packages/maven</url>
+            <url>http://localhost:8929/api/v4/projects/${gitlab.projectId}/packages/maven</url>
         </repository>
     </distributionManagement>
-
 </project>
