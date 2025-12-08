@@ -2,7 +2,7 @@ image: maven:3.9.9-eclipse-temurin-21-noble
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  APP_NAME: springboot-rest-service
+  APP_NAME: myRealEstateService
 
 cache:
   paths:
